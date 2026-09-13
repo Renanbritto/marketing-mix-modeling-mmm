@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <style>
+        :root {
+            --bg-base: #0a0e17;
+            --bg-card: #111827;
+            --bg-card-hover: #172236;
+            --border-color: #1e293b;
+            --border-focus: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-purple: #8b5cf6;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Top Navigation */
+        .navbar {
+            background-color: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--accent-emerald);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-emerald);
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .btn-link:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* KPI Metric Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 22px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0.8;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+        }
+
+        .kpi-subtext {
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Section Layouts */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .section-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .chart-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        /* Two columns layout */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Channels Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .health-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .health-SCALING {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .health-EFFICIENT {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .health-SATURATED {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .health-OVER_INVESTED {
+            background-color: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        /* Interactive Widgets: Simulator and Optimizer */
+        .interactive-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .slider-channel-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .slider-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #1e293b;
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+            transition: transform 0.1s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-action {
+            background: var(--gradient-primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+        }
+        .btn-action:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.85rem;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">M</div>
+            <div>
+                <div class="brand-title">{{ app_name }}</div>
+                <div class="brand-subtitle">Econometric Marketing Mix Modeling & Budget Optimizer</div>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <span class="badge-status">
+                <span class="badge-dot"></span>
+                Motor Ativo • R² {{ metrics.r_squared }}
+            </span>
+            <a href="/docs" class="btn-link" target="_blank">Swagger API &rarr;</a>
+            <a href="https://github.com/Renanbritto/marketing-mix-modeling-mmm" class="btn-link" target="_blank">GitHub &rarr;</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- Executive KPI Cards -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">ROAS Médio Histórico</div>
+                <div class="kpi-value" id="kpi-roas">{{ "%.2f"|format(global_roas) }}x</div>
+                <div class="kpi-subtext">Retorno por real investido</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Receita Anual Total</div>
+                <div class="kpi-value" id="kpi-revenue">R$ {{ "{:,.0f}".format(total_revenue).replace(",", ".") }}</div>
+                <div class="kpi-subtext">Receita global observada</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Investimento Total em Mídia</div>
+                <div class="kpi-value" id="kpi-spend">R$ {{ "{:,.0f}".format(total_budget).replace(",", ".") }}</div>
+                <div class="kpi-subtext">5 canais ativos em 104 semanas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Acurácia do Modelo (R²)</div>
+                <div class="kpi-value" style="color: var(--accent-emerald);">{{ metrics.r_squared }}</div>
+                <div class="kpi-subtext">MAPE: {{ metrics.mape_pct }}% • Ridge Regularized</div>
+            </div>
+        </section>
+
+        <!-- Main Decomposition Chart -->
+        <section class="chart-card">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Decomposição Econométrica de Receita</h2>
+                    <p class="section-desc">Contribuição incremental de cada canal de mídia vs. baseline orgânico e sazonalidade</p>
+                </div>
+            </div>
+            <div id="chart-decomposition" style="height: 420px;"></div>
+        </section>
+
+        <!-- S-Curves & Response Curves -->
+        <section class="chart-card">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Curvas de Saturação de Hill (S-Curves)</h2>
+                    <p class="section-desc">Comportamento de rendimentos decrescentes e pontos de saturação marginal (mROAS < 1.0)</p>
+                </div>
+            </div>
+            <div id="chart-response-curves" style="height: 380px;"></div>
+        </section>
+
+        <!-- Channel Health & Efficiency Matrix -->
+        <section class="chart-card">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Matriz de Eficiência e Saúde dos Canais</h2>
+                    <p class="section-desc">Diagnóstico marginal (mROAS) orientando decisões de aceleração, corte ou realocação</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table-channels">
+                    <thead>
+                        <tr>
+                            <th>Canal de Mídia</th>
+                            <th>Investimento Total</th>
+                            <th>Receita Atribuída</th>
+                            <th>ROAS Médio</th>
+                            <th>ROAS Marginal (mROAS)</th>
+                            <th>Contribuição</th>
+                            <th>Status de Saúde</th>
+                            <th>Recomendação Estratégica</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr><td colspan="8" style="text-align:center;">Carregando dados...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Interactive Tools: What-if Simulator + SciPy Optimizer -->
+        <div class="grid-2col">
+            
+            <!-- What-if Simulator -->
+            <div class="chart-card interactive-panel">
+                <div>
+                    <h2 class="section-title">Simulador de Cenários (What-if)</h2>
+                    <p class="section-desc">Ajuste os investimentos semanais e visualize a projeção de receita imediata</p>
+                </div>
+
+                <div id="sliders-container" style="display:flex; flex-direction:column; gap:16px;">
+                    <!-- Sliders injected by JS -->
+                </div>
+
+                <button class="btn-action" onclick="runSimulation()">
+                    <span>Simular Cenário</span> &rarr;
+                </button>
+
+                <div class="result-box" id="sim-results">
+                    <div class="result-row">
+                        <span>Orçamento Semanal:</span>
+                        <strong class="mono" id="sim-total-budget">-</strong>
+                    </div>
+                    <div class="result-row">
+                        <span>Receita Semanal Projetada:</span>
+                        <strong class="mono" style="color:var(--accent-emerald);" id="sim-projected-revenue">-</strong>
+                    </div>
+                    <div class="result-row">
+                        <span>ROAS Global do Cenário:</span>
+                        <strong class="mono" id="sim-roas-global">-</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Constrained SciPy Optimizer -->
+            <div class="chart-card interactive-panel">
+                <div>
+                    <h2 class="section-title">Otimizador de Orçamento (SciPy SLSQP)</h2>
+                    <p class="section-desc">Calcula a distribuição matemática perfeita que maximiza a receita com base em restrições</p>
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-channel-name">Orçamento Semanal Total para Otimização (BRL)</span>
+                        <span class="slider-val" id="opt-budget-display">R$ 102.000</span>
+                    </div>
+                    <input type="range" id="opt-total-budget" min="20000" max="250000" step="2000" value="102000" oninput="document.getElementById('opt-budget-display').innerText = 'R$ ' + Number(this.value).toLocaleString('pt-BR');">
+                </div>
+
+                <button class="btn-action" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);" onclick="runOptimization()">
+                    <span>Calcular Alocação Ótima</span> &rarr;
+                </button>
+
+                <div class="result-box" id="opt-results">
+                    <div class="result-row">
+                        <span>Receita Máxima Otimizada:</span>
+                        <strong class="mono" style="color:var(--accent-cyan);" id="opt-projected-revenue">-</strong>
+                    </div>
+                    <div class="result-row">
+                        <span>Lift Potencial vs Alocação Uniforme:</span>
+                        <strong class="mono" style="color:var(--accent-emerald);" id="opt-lift">-</strong>
+                    </div>
+                    <div class="result-row">
+                        <span>ROAS Global Otimizado:</span>
+                        <strong class="mono" id="opt-roas-global">-</strong>
+                    </div>
+                </div>
+
+                <div id="opt-chart" style="height: 220px; margin-top: 10px;"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const formatBRL = (val) => "R$ " + Number(val).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+        let channelDefaults = {};
+
+        // 1. Load Initial Channel Summary Table
+        async function loadChannelSummary() {
+            try {
+                const res = await fetch("/api/v1/channels/summary");
+                const channels = await res.json();
+                
+                const tbody = document.getElementById("table-body");
+                tbody.innerHTML = "";
+
+                channels.forEach(ch => {
+                    channelDefaults[ch.channel] = ch;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong>${ch.display_name}</strong></td>
+                        <td class="mono">${formatBRL(ch.total_spend)}</td>
+                        <td class="mono">${formatBRL(ch.attributed_revenue)}</td>
+                        <td class="mono"><strong>${ch.roas.toFixed(2)}x</strong></td>
+                        <td class="mono"><span style="color: ${ch.marginal_roas < 1.0 ? '#f43f5e' : '#10b981'}">${ch.marginal_roas.toFixed(3)}</span></td>
+                        <td class="mono">${ch.contribution_pct.toFixed(1)}%</td>
+                        <td><span class="health-badge health-${ch.health}">${ch.health}</span></td>
+                        <td style="font-size:0.8rem; color:#94a3b8;">${ch.recommendation}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                buildSimulatorSliders(channels);
+            } catch (err) {
+                console.error("Erro ao carregar resumo de canais:", err);
+            }
+        }
+
+        // 2. Load Decomposition Chart
+        async function loadDecomposition() {
+            try {
+                const res = await fetch("/api/v1/model/decomposition");
+                const data = await res.json();
+                
+                const weeks = data.weekly_data.map(d => "Sem " + d.week);
+                const baseOrganic = data.weekly_data.map(d => d.base_organic);
+                const seasonality = data.weekly_data.map(d => d.seasonality);
+                const meta = data.weekly_data.map(d => d.meta_ads);
+                const google = data.weekly_data.map(d => d.google_ads);
+                const tiktok = data.weekly_data.map(d => d.tiktok_ads);
+                const influencers = data.weekly_data.map(d => d.influencers);
+                const crm = data.weekly_data.map(d => d.crm_email);
+                const actual = data.weekly_data.map(d => d.total_actual);
+
+                const traces = [
+                    { x: weeks, y: baseOrganic, name: 'Base Orgânica', stackgroup: 'one', fillcolor: 'rgba(100, 116, 139, 0.4)', line: { color: '#64748b' } },
+                    { x: weeks, y: seasonality, name: 'Sazonalidade', stackgroup: 'one', fillcolor: 'rgba(139, 92, 246, 0.4)', line: { color: '#8b5cf6' } },
+                    { x: weeks, y: meta, name: 'Meta Ads', stackgroup: 'one', fillcolor: 'rgba(59, 130, 246, 0.5)', line: { color: '#3b82f6' } },
+                    { x: weeks, y: google, name: 'Google Ads', stackgroup: 'one', fillcolor: 'rgba(6, 182, 212, 0.5)', line: { color: '#06b6d4' } },
+                    { x: weeks, y: tiktok, name: 'TikTok Ads', stackgroup: 'one', fillcolor: 'rgba(244, 63, 94, 0.5)', line: { color: '#f43f5e' } },
+                    { x: weeks, y: influencers, name: 'Influenciadores', stackgroup: 'one', fillcolor: 'rgba(245, 158, 11, 0.5)', line: { color: '#f59e0b' } },
+                    { x: weeks, y: crm, name: 'CRM & Email', stackgroup: 'one', fillcolor: 'rgba(16, 185, 129, 0.5)', line: { color: '#10b981' } },
+                    { x: weeks, y: actual, name: 'Receita Real Observada', type: 'scatter', mode: 'lines', line: { color: '#f8fafc', width: 2, dash: 'dot' } }
+                ];
+
+                const layout = {
+                    paper_bgcolor: 'transparent',
+                    plot_bgcolor: 'transparent',
+                    font: { color: '#94a3b8', family: 'Inter' },
+                    margin: { t: 20, r: 20, l: 60, b: 40 },
+                    legend: { orientation: 'h', y: -0.2 },
+                    xaxis: { gridcolor: '#1e293b', zeroline: false },
+                    yaxis: { gridcolor: '#1e293b', zeroline: false, tickprefix: 'R$ ' },
+                    hovermode: 'x unified'
+                };
+
+                Plotly.newPlot('chart-decomposition', traces, layout, { responsive: true, displayModeBar: false });
+            } catch (err) {
+                console.error("Erro na decomposição:", err);
+            }
+        }
+
+        // 3. Load Response Curves (Hill Saturation)
+        async function loadResponseCurves() {
+            try {
+                const res = await fetch("/api/v1/model/response-curves");
+                const curves = await res.json();
+
+                const colors = ['#3b82f6', '#06b6d4', '#f43f5e', '#f59e0b', '#10b981'];
+                const traces = [];
+
+                curves.forEach((c, idx) => {
+                    const x = c.points.map(p => p.spend);
+                    const y = c.points.map(p => p.incremental_revenue);
+                    traces.push({
+                        x: x,
+                        y: y,
+                        name: c.display_name,
+                        type: 'scatter',
+                        mode: 'lines',
+                        line: { color: colors[idx % colors.length], width: 2.5 }
+                    });
+                });
+
+                const layout = {
+                    paper_bgcolor: 'transparent',
+                    plot_bgcolor: 'transparent',
+                    font: { color: '#94a3b8', family: 'Inter' },
+                    margin: { t: 20, r: 20, l: 60, b: 40 },
+                    legend: { orientation: 'h', y: -0.25 },
+                    xaxis: { title: 'Investimento Semanal (BRL)', gridcolor: '#1e293b', zeroline: false, tickprefix: 'R$ ' },
+                    yaxis: { title: 'Receita Incremental (BRL)', gridcolor: '#1e293b', zeroline: false, tickprefix: 'R$ ' },
+                    hovermode: 'closest'
+                };
+
+                Plotly.newPlot('chart-response-curves', traces, layout, { responsive: true, displayModeBar: false });
+            } catch (err) {
+                console.error("Erro nas curvas de resposta:", err);
+            }
+        }
+
+        // 4. Build What-If Simulator Sliders
+        function buildSimulatorSliders(channels) {
+            const container = document.getElementById("sliders-container");
+            container.innerHTML = "";
+
+            const defaultSpends = {
+                "meta_ads": 38000,
+                "google_ads": 32000,
+                "tiktok_ads": 15000,
+                "influencers": 12000,
+                "crm_email": 5000
+            };
+
+            channels.forEach(ch => {
+                const val = defaultSpends[ch.channel] || 20000;
+                const div = document.createElement("div");
+                div.className = "slider-group";
+                div.innerHTML = `
+                    <div class="slider-header">
+                        <span class="slider-channel-name">${ch.display_name}</span>
+                        <span class="slider-val" id="val-${ch.channel}">${formatBRL(val)}</span>
+                    </div>
+                    <input type="range" id="slider-${ch.channel}" min="0" max="80000" step="1000" value="${val}"
+                           oninput="document.getElementById('val-${ch.channel}').innerText = formatBRL(this.value)">
+                `;
+                container.appendChild(div);
+            });
+
+            runSimulation();
+        }
+
+        // 5. Run What-If Simulation
+        async function runSimulation() {
+            const allocation = {};
+            const channels = ["meta_ads", "google_ads", "tiktok_ads", "influencers", "crm_email"];
+            channels.forEach(ch => {
+                const el = document.getElementById(`slider-${ch}`);
+                if (el) allocation[ch] = parseFloat(el.value);
+            });
+
+            try {
+                const res = await fetch("/api/v1/simulate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ budget_allocation: allocation })
+                });
+                const data = await res.json();
+
+                document.getElementById("sim-total-budget").innerText = formatBRL(data.total_weekly_budget);
+                document.getElementById("sim-projected-revenue").innerText = formatBRL(data.projected_weekly_revenue);
+                document.getElementById("sim-roas-global").innerText = data.roas_global.toFixed(2) + "x";
+            } catch (err) {
+                console.error("Erro na simulação:", err);
+            }
+        }
+
+        // 6. Run SciPy Constrained Optimization
+        async function runOptimization() {
+            const budgetInput = parseFloat(document.getElementById("opt-total-budget").value);
+
+            try {
+                const res = await fetch("/api/v1/optimize", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        total_budget: budgetInput,
+                        min_per_channel: { "crm_email": 2000.0 },
+                        max_per_channel: { "meta_ads": 60000.0 }
+                    })
+                });
+                const data = await res.json();
+
+                document.getElementById("opt-projected-revenue").innerText = formatBRL(data.projected_revenue);
+                document.getElementById("opt-lift").innerText = "+" + data.lift_vs_uniform_pct.toFixed(1) + "%";
+                document.getElementById("opt-roas-global").innerText = data.roas_global.toFixed(2) + "x";
+
+                // Render mini bar chart with optimal allocation
+                const chNames = data.channels.map(c => c.channel.replace("_", " ").toUpperCase());
+                const spends = data.channels.map(c => c.spend);
+
+                const trace = [{
+                    x: chNames,
+                    y: spends,
+                    type: 'bar',
+                    marker: {
+                        color: ['#3b82f6', '#06b6d4', '#f43f5e', '#f59e0b', '#10b981']
+                    }
+                }];
+
+                const layout = {
+                    paper_bgcolor: 'transparent',
+                    plot_bgcolor: 'transparent',
+                    font: { color: '#94a3b8', family: 'Inter', size: 10 },
+                    margin: { t: 10, r: 10, l: 40, b: 30 },
+                    yaxis: { gridcolor: '#1e293b', zeroline: false }
+                };
+
+                Plotly.newPlot('opt-chart', trace, layout, { responsive: true, displayModeBar: false });
+
+            } catch (err) {
+                console.error("Erro na otimização:", err);
+            }
+        }
+
+        // Initialize all components on load
+        window.addEventListener("DOMContentLoaded", () => {
+            loadChannelSummary();
+            loadDecomposition();
+            loadResponseCurves();
+            runOptimization();
+        });
+    </script>
+</body>
+</html>
