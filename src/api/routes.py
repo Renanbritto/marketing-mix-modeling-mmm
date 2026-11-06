@@ -49,6 +49,9 @@ def get_optimizer() -> BudgetOptimizer:
 
 
 @router.get("/", response_class=HTMLResponse, tags=["Dashboard"])
+@router.get("/api", response_class=HTMLResponse, tags=["Dashboard"], include_in_schema=False)
+@router.get("/api/", response_class=HTMLResponse, tags=["Dashboard"], include_in_schema=False)
+@router.get("/api/index.py", response_class=HTMLResponse, tags=["Dashboard"], include_in_schema=False)
 async def get_dashboard(request: Request):
     """Serve the interactive MMM analytics and budget optimization dashboard."""
     templates = getattr(request.app.state, "templates", None)
@@ -87,6 +90,7 @@ async def get_dashboard(request: Request):
 
 
 @router.get("/health", response_model=HealthResponse, tags=["System"])
+@router.get("/api/health", response_model=HealthResponse, tags=["System"], include_in_schema=False)
 async def health_check():
     """Health check endpoint for container orchestrators and monitoring."""
     return HealthResponse(

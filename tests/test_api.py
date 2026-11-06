@@ -93,3 +93,25 @@ class TestAPIEndpoints:
         data = response.json()
         assert len(data) == 5
         assert all("health" in ch for ch in data)
+
+    def test_vercel_routing_compatibility(self, client):
+        """Verify seamless operation under Vercel Serverless Function rewrites."""
+        # 1. Direct hit to /api returns dashboard HTML
+        resp1 = client.get("/api")
+        assert resp1.status_code == 200
+        assert "text/html" in resp1.headers["content-type"]
+
+        # 2. Vercel rewrite with x-matched-path: / returns dashboard HTML
+        resp2 = client.get("/api/index.py", headers={"x-matched-path": "/"})
+        assert resp2.status_code == 200
+        assert "text/html" in resp2.headers["content-type"]
+
+        # 3. Vercel rewrite with x-matched-path: /health returns JSON
+        resp3 = client.get("/api/index.py", headers={"x-matched-path": "/health"})
+        assert resp3.status_code == 200
+        assert resp3.json()["status"] == "healthy"
+
+        # 4. Direct /api/index.py without header also serves dashboard HTML
+        resp4 = client.get("/api/index.py")
+        assert resp4.status_code == 200
+        assert "text/html" in resp4.headers["content-type"]

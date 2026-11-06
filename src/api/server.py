@@ -6,9 +6,42 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.types import ASGIApp, Scope, Receive, Send
 
 from src.config.settings import settings
 from src.api.routes import router, get_model
+
+
+class VercelPathMiddleware:
+    """ASGI Middleware to ensure accurate route matching on Vercel Serverless Functions.
+
+    When Vercel rewrites requests to /api/index.py, the ASGI scope['path'] can be set
+    to '/api/index.py' instead of the original request path. Vercel forwards the original
+    requested URI in the 'x-matched-path' or 'x-forwarded-uri' HTTP headers.
+    This middleware restores the original path so FastAPI routes match cleanly.
+    """
+
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] == "http":
+            path = scope.get("path", "")
+            headers = dict(scope.get("headers", []))
+            raw_matched = (
+                headers.get(b"x-matched-path", b"").decode("latin1")
+                or headers.get(b"x-forwarded-uri", b"").decode("latin1")
+            )
+            matched_path = raw_matched.split("?")[0] if raw_matched else ""
+
+            if matched_path and matched_path.startswith("/") and not matched_path.startswith("/api/index.py"):
+                scope["path"] = matched_path
+            elif path in ("/api/index.py", "/api", "/api/", "/api/index"):
+                scope["path"] = "/"
+            elif path.startswith("/api/index.py/"):
+                scope["path"] = path[len("/api/index.py") :]
+
+        await self.app(scope, receive, send)
 
 
 @asynccontextmanager
@@ -32,6 +65,9 @@ def create_app() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
     )
+
+    # Vercel ASGI path normalizer
+    app.add_middleware(VercelPathMiddleware)
 
     # CORS configuration
     app.add_middleware(
