@@ -431,11 +431,113 @@
         .container {
             max-width: 1440px;
             margin: 0 auto;
-            padding: 28px 32px;
+            padding: 24px 32px;
             display: flex;
             flex-direction: column;
             gap: 24px;
             width: 100%;
+        }
+
+        /* Tactical Filters Ribbon */
+        .filters-ribbon {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .filters-ribbon-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding-right: 14px;
+            border-right: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .filters-ribbon-title svg {
+            color: var(--accent-cyan);
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .filter-select {
+            background-color: var(--bg-card-hover);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .filter-select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .filter-select option {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            padding-top: 18px;
+        }
+
+        .btn-filter-reset {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-filter-reset:hover {
+            background-color: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-rose);
         }
 
         /* Tab Panes */
@@ -882,12 +984,79 @@
                 </div>
                 <div class="topbar-right">
                     <div class="topbar-stat">
-                        Série: <strong>{{ (n_weeks / 52)|round(1) if n_weeks else 2 }} anos ({{ n_weeks if n_weeks else 104 }} sem)</strong>
+                        Série: <strong id="topbar-series-stat">{{ (n_weeks / 52)|round(1) if n_weeks else 2 }} anos ({{ n_weeks if n_weeks else 104 }} sem)</strong>
                     </div>
                 </div>
             </header>
 
             <main class="container">
+
+                <!-- Tactical Filters Ribbon -->
+                <section class="filters-ribbon">
+                    <div class="filters-ribbon-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                        </svg>
+                        <span>Filtros Táticos:</span>
+                    </div>
+
+                    <!-- 1. Time Horizon Filter -->
+                    <div class="filter-item">
+                        <label class="filter-label" for="filter-timeframe">Janela Temporal</label>
+                        <select id="filter-timeframe" class="filter-select" onchange="applyTacticalFilters()">
+                            <option value="104" selected>Todo o Histórico (104 semanas / 2 anos)</option>
+                            <option value="52">Último Ano (Últimas 52 semanas)</option>
+                            <option value="26">Último Semestre (Últimas 26 semanas)</option>
+                            <option value="12">Último Trimestre / Q4 (Últimas 12 semanas)</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Media Funnel / Category Filter -->
+                    <div class="filter-item">
+                        <label class="filter-label" for="filter-category">Cluster de Mídia</label>
+                        <select id="filter-category" class="filter-select" onchange="applyTacticalFilters()">
+                            <option value="all" selected>Todos os Canais (5 canais)</option>
+                            <option value="performance">🎯 Performance / Bottom Funnel (Google + CRM)</option>
+                            <option value="brand_social">📢 Branding & Redes (Meta + TikTok + Influencers)</option>
+                            <option value="paid_external">👥 Mídia Paga Externa</option>
+                            <option value="retention">💌 First-Party / Retenção (CRM & E-mail)</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Channel Health Classification Filter -->
+                    <div class="filter-item">
+                        <label class="filter-label" for="filter-health">Diagnóstico de Saúde</label>
+                        <select id="filter-health" class="filter-select" onchange="applyTacticalFilters()">
+                            <option value="all" selected>Todos os Status</option>
+                            <option value="SCALING">🟢 Scaling (mROAS ≥ 3.0 • Acelerar)</option>
+                            <option value="EFFICIENT">🔵 Efficient (1.5 ≤ mROAS &lt; 3.0 • Saudável)</option>
+                            <option value="SATURATED">🟡 Saturated (0.8 ≤ mROAS &lt; 1.5 • Inflexão)</option>
+                            <option value="OVER_INVESTED">🔴 Over-Invested (mROAS &lt; 0.8 • Cortar)</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Strategic Optimization Focus -->
+                    <div class="filter-item">
+                        <label class="filter-label" for="filter-strategy">Meta Tática</label>
+                        <select id="filter-strategy" class="filter-select" onchange="applyStrategyFilter()">
+                            <option value="balanced" selected>⚖️ Equilibrada (Padrão)</option>
+                            <option value="max_revenue">🚀 Aceleração de Receita (Escala)</option>
+                            <option value="max_roas">🛡️ Margem & Alta Eficiência (mROAS &gt; 1.5)</option>
+                            <option value="defensive">📉 Controle de Custos (-20% budget)</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Action -->
+                    <div class="filter-actions">
+                        <button class="btn-filter-reset" onclick="resetTacticalFilters()" title="Redefinir todos os filtros">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                            <span>Resetar</span>
+                        </button>
+                    </div>
+                </section>
 
                 <!-- ========================================== -->
                 <!-- TAB 1: VISÃO GERAL & MODELAGEM             -->
@@ -1277,91 +1446,99 @@
             }, 60);
         }
 
-        // 1. Load Initial Channel Summary Table
-        async function loadChannelSummary() {
-            try {
-                const res = await fetch("/api/v1/channels/summary");
-                const channels = await res.json();
-                
-                const tbody = document.getElementById("table-body");
-                tbody.innerHTML = "";
+        let rawDecompositionData = null;
+        let rawChannelSummaries = [];
+        let rawResponseCurves = [];
 
-                channels.forEach(ch => {
-                    channelDefaults[ch.channel] = ch;
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td><strong>${ch.display_name}</strong></td>
-                        <td class="mono">${formatBRL(ch.total_spend)}</td>
-                        <td class="mono">${formatBRL(ch.attributed_revenue)}</td>
-                        <td class="mono"><strong>${ch.roas.toFixed(2)}x</strong></td>
-                        <td class="mono"><span style="color: ${ch.marginal_roas < 1.0 ? '#f43f5e' : '#10b981'}">${ch.marginal_roas.toFixed(3)}</span></td>
-                        <td class="mono">${ch.contribution_pct.toFixed(1)}%</td>
-                        <td><span class="health-badge health-${ch.health}">${ch.health}</span></td>
-                        <td style="font-size:0.8rem; color:#94a3b8;">${ch.recommendation}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+        const CHANNEL_CATEGORIES = {
+            'meta_ads': ['brand_social', 'paid_external'],
+            'google_ads': ['performance', 'paid_external'],
+            'tiktok_ads': ['brand_social', 'paid_external'],
+            'influencers': ['brand_social', 'paid_external'],
+            'crm_email': ['performance', 'retention']
+        };
 
-                buildSimulatorSliders(channels);
-            } catch (err) {
-                console.error("Erro ao carregar resumo de canais:", err);
-            }
+        // Render Decomposition Chart function
+        function renderDecompositionChart(weeklyData) {
+            const weeks = weeklyData.map(d => "Sem " + d.week);
+            const baseOrganic = weeklyData.map(d => d.base_organic);
+            const seasonality = weeklyData.map(d => d.seasonality);
+            const meta = weeklyData.map(d => d.meta_ads);
+            const google = weeklyData.map(d => d.google_ads);
+            const tiktok = weeklyData.map(d => d.tiktok_ads);
+            const influencers = weeklyData.map(d => d.influencers);
+            const crm = weeklyData.map(d => d.crm_email);
+            const actual = weeklyData.map(d => d.total_actual);
+
+            const traces = [
+                { x: weeks, y: baseOrganic, name: 'Base Orgânica', stackgroup: 'one', fillcolor: 'rgba(100, 116, 139, 0.4)', line: { color: '#64748b' } },
+                { x: weeks, y: seasonality, name: 'Sazonalidade', stackgroup: 'one', fillcolor: 'rgba(139, 92, 246, 0.4)', line: { color: '#8b5cf6' } },
+                { x: weeks, y: meta, name: 'Meta Ads', stackgroup: 'one', fillcolor: 'rgba(59, 130, 246, 0.5)', line: { color: '#3b82f6' } },
+                { x: weeks, y: google, name: 'Google Ads', stackgroup: 'one', fillcolor: 'rgba(6, 182, 212, 0.5)', line: { color: '#06b6d4' } },
+                { x: weeks, y: tiktok, name: 'TikTok Ads', stackgroup: 'one', fillcolor: 'rgba(244, 63, 94, 0.5)', line: { color: '#f43f5e' } },
+                { x: weeks, y: influencers, name: 'Influenciadores', stackgroup: 'one', fillcolor: 'rgba(245, 158, 11, 0.5)', line: { color: '#f59e0b' } },
+                { x: weeks, y: crm, name: 'CRM & Email', stackgroup: 'one', fillcolor: 'rgba(16, 185, 129, 0.5)', line: { color: '#10b981' } },
+                { x: weeks, y: actual, name: 'Receita Real Observada', type: 'scatter', mode: 'lines', line: { color: '#ffffff', width: 2, dash: 'dot' } }
+            ];
+
+            const layout = {
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                font: { color: '#e2e8f0', family: 'Inter' },
+                margin: { t: 20, r: 20, l: 60, b: 40 },
+                legend: { orientation: 'h', y: -0.2 },
+                xaxis: { gridcolor: '#222533', zeroline: false },
+                yaxis: { gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
+                hovermode: 'x unified'
+            };
+
+            Plotly.newPlot('chart-decomposition', traces, layout, { responsive: true, displayModeBar: false });
         }
 
-        // 2. Load Decomposition Chart
-        async function loadDecomposition() {
-            try {
-                const res = await fetch("/api/v1/model/decomposition");
-                const data = await res.json();
-                
-                const weeks = data.weekly_data.map(d => "Sem " + d.week);
-                const baseOrganic = data.weekly_data.map(d => d.base_organic);
-                const seasonality = data.weekly_data.map(d => d.seasonality);
-                const meta = data.weekly_data.map(d => d.meta_ads);
-                const google = data.weekly_data.map(d => d.google_ads);
-                const tiktok = data.weekly_data.map(d => d.tiktok_ads);
-                const influencers = data.weekly_data.map(d => d.influencers);
-                const crm = data.weekly_data.map(d => d.crm_email);
-                const actual = data.weekly_data.map(d => d.total_actual);
+        // Render Filtered Table
+        function renderFilteredTable(category, health) {
+            const tbody = document.getElementById("table-body");
+            if (!tbody || !rawChannelSummaries.length) return;
+            tbody.innerHTML = "";
 
-                const traces = [
-                    { x: weeks, y: baseOrganic, name: 'Base Orgânica', stackgroup: 'one', fillcolor: 'rgba(100, 116, 139, 0.4)', line: { color: '#64748b' } },
-                    { x: weeks, y: seasonality, name: 'Sazonalidade', stackgroup: 'one', fillcolor: 'rgba(139, 92, 246, 0.4)', line: { color: '#8b5cf6' } },
-                    { x: weeks, y: meta, name: 'Meta Ads', stackgroup: 'one', fillcolor: 'rgba(59, 130, 246, 0.5)', line: { color: '#3b82f6' } },
-                    { x: weeks, y: google, name: 'Google Ads', stackgroup: 'one', fillcolor: 'rgba(6, 182, 212, 0.5)', line: { color: '#06b6d4' } },
-                    { x: weeks, y: tiktok, name: 'TikTok Ads', stackgroup: 'one', fillcolor: 'rgba(244, 63, 94, 0.5)', line: { color: '#f43f5e' } },
-                    { x: weeks, y: influencers, name: 'Influenciadores', stackgroup: 'one', fillcolor: 'rgba(245, 158, 11, 0.5)', line: { color: '#f59e0b' } },
-                    { x: weeks, y: crm, name: 'CRM & Email', stackgroup: 'one', fillcolor: 'rgba(16, 185, 129, 0.5)', line: { color: '#10b981' } },
-                    { x: weeks, y: actual, name: 'Receita Real Observada', type: 'scatter', mode: 'lines', line: { color: '#ffffff', width: 2, dash: 'dot' } }
-                ];
+            const filtered = rawChannelSummaries.filter(ch => {
+                const matchCategory = (category === 'all') || (CHANNEL_CATEGORIES[ch.channel] && CHANNEL_CATEGORIES[ch.channel].includes(category));
+                const matchHealth = (health === 'all') || (ch.health === health);
+                return matchCategory && matchHealth;
+            });
 
-                const layout = {
-                    paper_bgcolor: 'transparent',
-                    plot_bgcolor: 'transparent',
-                    font: { color: '#e2e8f0', family: 'Inter' },
-                    margin: { t: 20, r: 20, l: 60, b: 40 },
-                    legend: { orientation: 'h', y: -0.2 },
-                    xaxis: { gridcolor: '#222533', zeroline: false },
-                    yaxis: { gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
-                    hovermode: 'x unified'
-                };
-
-                Plotly.newPlot('chart-decomposition', traces, layout, { responsive: true, displayModeBar: false });
-            } catch (err) {
-                console.error("Erro na decomposição:", err);
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color: var(--text-muted);">
+                    Nenhum canal corresponde aos filtros táticos selecionados.
+                </td></tr>`;
+                return;
             }
+
+            filtered.forEach(ch => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${ch.display_name}</strong></td>
+                    <td class="mono">${formatBRL(ch.total_spend)}</td>
+                    <td class="mono">${formatBRL(ch.attributed_revenue)}</td>
+                    <td class="mono"><strong>${ch.roas.toFixed(2)}x</strong></td>
+                    <td class="mono"><span style="color: ${ch.marginal_roas < 1.0 ? '#f43f5e' : '#10b981'}">${ch.marginal_roas.toFixed(3)}</span></td>
+                    <td class="mono">${ch.contribution_pct.toFixed(1)}%</td>
+                    <td><span class="health-badge health-${ch.health}">${ch.health}</span></td>
+                    <td style="font-size:0.8rem; color:#94a3b8;">${ch.recommendation}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // 3. Load Response Curves (Hill Saturation)
-        async function loadResponseCurves() {
-            try {
-                const res = await fetch("/api/v1/model/response-curves");
-                const curves = await res.json();
+        // Render Filtered Response Curves
+        function renderFilteredResponseCurves(category) {
+            if (!rawResponseCurves.length) return;
+            const colors = ['#3b82f6', '#06b6d4', '#f43f5e', '#f59e0b', '#10b981'];
+            const traces = [];
 
-                const colors = ['#3b82f6', '#06b6d4', '#f43f5e', '#f59e0b', '#10b981'];
-                const traces = [];
-
-                curves.forEach((c, idx) => {
+            rawResponseCurves.forEach((c, idx) => {
+                const matchCategory = (category === 'all') || (CHANNEL_CATEGORIES[c.channel] && CHANNEL_CATEGORIES[c.channel].includes(category));
+                if (matchCategory) {
                     const x = c.points.map(p => p.spend);
                     const y = c.points.map(p => p.incremental_revenue);
                     traces.push({
@@ -1372,20 +1549,125 @@
                         mode: 'lines',
                         line: { color: colors[idx % colors.length], width: 2.5 }
                     });
+                }
+            });
+
+            const layout = {
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                font: { color: '#e2e8f0', family: 'Inter' },
+                margin: { t: 20, r: 20, l: 60, b: 40 },
+                legend: { orientation: 'h', y: -0.25 },
+                xaxis: { title: 'Investimento Semanal (BRL)', gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
+                yaxis: { title: 'Receita Incremental (BRL)', gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('chart-response-curves', traces, layout, { responsive: true, displayModeBar: false });
+        }
+
+        // Apply Tactical Filters
+        function applyTacticalFilters() {
+            const timeframe = parseInt(document.getElementById('filter-timeframe').value) || 104;
+            const category = document.getElementById('filter-category').value || 'all';
+            const health = document.getElementById('filter-health').value || 'all';
+
+            // 1. Timeframe
+            if (rawDecompositionData && rawDecompositionData.weekly_data) {
+                const slicedWeeks = rawDecompositionData.weekly_data.slice(-timeframe);
+                
+                const filteredTotalRev = slicedWeeks.reduce((acc, d) => acc + d.total_actual, 0);
+                const weeklyBudgetBase = Object.values(defaultSpends).reduce((a, b) => a + b, 0);
+                const filteredSpend = weeklyBudgetBase * timeframe;
+                const filteredRoas = filteredSpend > 0 ? (filteredTotalRev / filteredSpend) : 0;
+
+                const kpiRoas = document.getElementById('kpi-roas');
+                const kpiRev = document.getElementById('kpi-revenue');
+                const kpiSpend = document.getElementById('kpi-spend');
+                if (kpiRoas) kpiRoas.innerText = filteredRoas.toFixed(2) + 'x';
+                if (kpiRev) kpiRev.innerText = formatBRL(filteredTotalRev);
+                if (kpiSpend) kpiSpend.innerText = formatBRL(filteredSpend);
+
+                const statEl = document.getElementById('topbar-series-stat');
+                if (statEl) {
+                    statEl.innerText = `${(timeframe/52).toFixed(1)} anos (${timeframe} sem)`;
+                }
+
+                renderDecompositionChart(slicedWeeks);
+            }
+
+            // 2. Table
+            renderFilteredTable(category, health);
+
+            // 3. Response Curves
+            renderFilteredResponseCurves(category);
+
+            // 4. Highlight or dim sliders matching category
+            document.querySelectorAll('.slider-group').forEach(el => {
+                const ch = el.getAttribute('data-channel');
+                if (!ch) return;
+                const match = (category === 'all') || (CHANNEL_CATEGORIES[ch] && CHANNEL_CATEGORIES[ch].includes(category));
+                el.style.opacity = match ? '1' : '0.35';
+                el.style.filter = match ? 'none' : 'grayscale(0.6)';
+            });
+        }
+
+        // Apply Strategy Filter
+        function applyStrategyFilter() {
+            const strategy = document.getElementById('filter-strategy').value;
+            if (strategy === 'max_revenue') {
+                applyPreset('scale_up');
+            } else if (strategy === 'max_roas') {
+                applyPreset('high_efficiency');
+            } else if (strategy === 'defensive') {
+                applyPreset('scale_down');
+            } else {
+                applyPreset('default');
+            }
+        }
+
+        // Reset All Tactical Filters
+        function resetTacticalFilters() {
+            document.getElementById('filter-timeframe').value = '104';
+            document.getElementById('filter-category').value = 'all';
+            document.getElementById('filter-health').value = 'all';
+            document.getElementById('filter-strategy').value = 'balanced';
+            applyTacticalFilters();
+            applyStrategyFilter();
+        }
+
+        // 1. Load Initial Channel Summary Table
+        async function loadChannelSummary() {
+            try {
+                const res = await fetch("/api/v1/channels/summary");
+                rawChannelSummaries = await res.json();
+                rawChannelSummaries.forEach(ch => {
+                    channelDefaults[ch.channel] = ch;
                 });
+                renderFilteredTable('all', 'all');
+                buildSimulatorSliders(rawChannelSummaries);
+            } catch (err) {
+                console.error("Erro ao carregar resumo de canais:", err);
+            }
+        }
 
-                const layout = {
-                    paper_bgcolor: 'transparent',
-                    plot_bgcolor: 'transparent',
-                    font: { color: '#e2e8f0', family: 'Inter' },
-                    margin: { t: 20, r: 20, l: 60, b: 40 },
-                    legend: { orientation: 'h', y: -0.25 },
-                    xaxis: { title: 'Investimento Semanal (BRL)', gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
-                    yaxis: { title: 'Receita Incremental (BRL)', gridcolor: '#222533', zeroline: false, tickprefix: 'R$ ' },
-                    hovermode: 'closest'
-                };
+        // 2. Load Decomposition Chart
+        async function loadDecomposition() {
+            try {
+                const res = await fetch("/api/v1/model/decomposition");
+                rawDecompositionData = await res.json();
+                renderDecompositionChart(rawDecompositionData.weekly_data);
+            } catch (err) {
+                console.error("Erro na decomposição:", err);
+            }
+        }
 
-                Plotly.newPlot('chart-response-curves', traces, layout, { responsive: true, displayModeBar: false });
+        // 3. Load Response Curves (Hill Saturation)
+        async function loadResponseCurves() {
+            try {
+                const res = await fetch("/api/v1/model/response-curves");
+                rawResponseCurves = await res.json();
+                renderFilteredResponseCurves('all');
             } catch (err) {
                 console.error("Erro nas curvas de resposta:", err);
             }
@@ -1407,6 +1689,8 @@
                 const val = defaultSpends[ch.channel] || 20000;
                 const div = document.createElement("div");
                 div.className = "slider-group";
+                div.setAttribute("data-channel", ch.channel);
+                div.style.transition = "opacity 0.2s ease, filter 0.2s ease";
                 div.innerHTML = `
                     <div class="slider-header">
                         <span class="slider-channel-name">${ch.display_name}</span>
