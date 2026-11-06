@@ -38,14 +38,23 @@ class VercelPathMiddleware:
                 path = scope.get("path", "")
                 raw_matched = ""
 
-                # Headers in ASGI may be bytes or strings depending on environment/adapter
-                headers_list = scope.get("headers") or []
-                for item in headers_list:
-                    if isinstance(item, (list, tuple)) and len(item) == 2:
-                        k = self._to_str(item[0]).lower()
-                        if k in ("x-matched-path", "x-forwarded-uri", "x-vercel-matched-path"):
-                            raw_matched = self._to_str(item[1])
-                            break
+                # 1. Check query string for path parameter passed by Vercel rewrite
+                qs = self._to_str(scope.get("query_string", ""))
+                if "path=" in qs:
+                    import urllib.parse
+                    params = urllib.parse.parse_qs(qs)
+                    if "path" in params and params["path"]:
+                        raw_matched = params["path"][0]
+
+                # 2. Check HTTP headers
+                if not raw_matched:
+                    headers_list = scope.get("headers") or []
+                    for item in headers_list:
+                        if isinstance(item, (list, tuple)) and len(item) == 2:
+                            k = self._to_str(item[0]).lower()
+                            if k in ("x-matched-path", "x-forwarded-uri", "x-original-url", "x-vercel-matched-path"):
+                                raw_matched = self._to_str(item[1])
+                                break
 
                 matched_path = raw_matched.split("?")[0] if raw_matched else ""
 

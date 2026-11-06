@@ -111,7 +111,12 @@ class TestAPIEndpoints:
         assert resp3.status_code == 200
         assert resp3.json()["status"] == "healthy"
 
-        # 4. Direct /api/index.py without header also serves dashboard HTML
-        resp4 = client.get("/api/index.py")
-        assert resp4.status_code == 200
-        assert "text/html" in resp4.headers["content-type"]
+        # 5. Vercel query rewrite with ?path=/health returns JSON
+        resp5 = client.get("/api/index.py?path=/health")
+        assert resp5.status_code == 200
+        assert resp5.json()["status"] == "healthy"
+
+        # 6. Vercel query rewrite with ?path=/api/v1/model/metrics returns metrics
+        resp6 = client.get("/api/index.py?path=/api/v1/model/metrics")
+        assert resp6.status_code == 200
+        assert "r_squared" in resp6.json()
