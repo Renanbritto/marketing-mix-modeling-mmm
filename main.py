@@ -5,7 +5,6 @@ import sys
 import os
 import json
 import uvicorn
-import pytest
 
 from src.config.settings import settings
 from src.data.sample_generator import MarketingDataGenerator
@@ -127,6 +126,7 @@ def serve_api(host: str = "0.0.0.0", port: int = 8000):
 
 def run_tests():
     """Run full test suite via Pytest."""
+    import pytest
     print("Executando suite de testes automatizados com Pytest...")
     ret = pytest.main(["-v", "tests/"])
     sys.exit(ret)
