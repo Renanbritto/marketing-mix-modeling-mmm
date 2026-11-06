@@ -63,14 +63,6 @@ class VercelPathMiddleware:
         await self.app(scope, receive, send)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan context: preheats model and resources on startup."""
-    # Pre-train MMM model on startup so initial requests are instantaneous
-    get_model()
-    yield
-
-
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application instance."""
     app = FastAPI(
@@ -80,7 +72,6 @@ def create_app() -> FastAPI:
             "API para Marketing Mix Modeling (MMM) com transformações Adstock, "
             "curvas de saturação Hill e otimização de orçamento multicanal via SciPy SLSQP."
         ),
-        lifespan=lifespan,
         docs_url="/docs",
         redoc_url="/redoc",
     )

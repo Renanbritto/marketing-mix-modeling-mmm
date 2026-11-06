@@ -12,10 +12,7 @@ from src.data.sample_generator import MarketingDataGenerator
 from src.engine.mmm_model import MarketingMixModel
 from src.engine.optimizer import BudgetOptimizer
 from src.domain.models import CHANNEL_DISPLAY_NAMES
-from src.api.server import create_app
-
-# Expose app for ASGI servers and Vercel native FastAPI preset detection
-app = create_app()
+from api.index import app
 
 
 def run_pipeline():
