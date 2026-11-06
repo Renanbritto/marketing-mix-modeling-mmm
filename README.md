@@ -70,6 +70,8 @@ marketing-mix-modeling-mmm/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                     # Pipeline CI (Lint + Pytest 3.11/3.12)
+├── api/
+│   └── index.py                       # Handler serverless para deploy na Vercel
 ├── src/
 │   ├── __init__.py
 │   ├── api/                           # Camada HTTP e Controladores
@@ -92,9 +94,9 @@ marketing-mix-modeling-mmm/
 │   │   ├── mmm_model.py              # Pipeline completo (Fit, Predict, Decompose)
 │   │   └── optimizer.py               # Otimizador SciPy SLSQP Constrained
 │   ├── templates/                     # Interface Web
-│   │   └── dashboard.html             # Dashboard interativo com Plotly.js
+│   │   └── dashboard.html             # Dashboard interativo com Plotly.js, Sidebar e Filtros Táticos
 │   └── static/                        # Assets estaticos
-├── tests/                             # Suite de Testes Automatizados (26+ testes)
+├── tests/                             # Suite de Testes Automatizados (32 testes)
 │   ├── __init__.py
 │   ├── test_transformations.py        # Testes de Adstock e Hill
 │   ├── test_mmm_model.py             # Testes do ajuste, R2 e decomposicao
@@ -105,7 +107,9 @@ marketing-mix-modeling-mmm/
 ├── main.py                            # CLI unificada (--run-pipeline, --serve-api)
 ├── Dockerfile                         # Build multi-stage minimalista
 ├── docker-compose.yml                 # Orquestracao do servico local
-├── requirements.txt                   # Dependencias diretas
+├── vercel.json                        # Roteamento e configuracao da Vercel
+├── requirements.txt                   # Dependencias diretas de producao
+├── requirements-dev.txt               # Dependencias de desenvolvimento e testes
 ├── pyproject.toml                     # Metadados e configuracao de ferramentas
 ├── .gitignore
 ├── LICENSE                            # MIT License
@@ -141,6 +145,14 @@ pip install -r requirements.txt
 docker-compose up --build
 ```
 Acesse o dashboard em: **`http://localhost:8000`**
+
+### Opção 3: Deploy Serverless na Vercel
+
+O projeto conta com [api/index.py](api/index.py) e [vercel.json](vercel.json) configurados:
+
+1. Importe o repositório na [Vercel](https://vercel.com).
+2. Deixe o Framework Preset como **Other** e Root Directory como `./`.
+3. Clique em **Deploy** (o runtime Python e o FastAPI serão configurados automaticamente).
 
 ---
 

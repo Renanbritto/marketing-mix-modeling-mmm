@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ app_name }}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -110,15 +111,15 @@
             width: 40px;
             height: 40px;
             min-width: 40px;
-            background: var(--gradient-primary);
-            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 19px;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+        .brand-icon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: block;
         }
 
         .brand-text {
@@ -896,7 +897,9 @@
             <!-- Header Brand & Retract Button -->
             <div class="sidebar-header">
                 <div class="sidebar-brand">
-                    <div class="brand-icon">M</div>
+                    <div class="brand-icon">
+                        <img src="/static/favicon.svg" alt="MMM Logo" />
+                    </div>
                     <div class="brand-text">
                         <div class="brand-title">MMM Engine</div>
                         <div class="brand-subtitle">Marketing Mix Modeling</div>
