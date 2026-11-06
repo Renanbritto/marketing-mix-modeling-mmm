@@ -24,22 +24,41 @@ class VercelPathMiddleware:
     def __init__(self, app: ASGIApp):
         self.app = app
 
-    async def __call__(self, scope: Scope, receive: Receive, send: Send):
-        if scope["type"] == "http":
-            path = scope.get("path", "")
-            headers = dict(scope.get("headers", []))
-            raw_matched = (
-                headers.get(b"x-matched-path", b"").decode("latin1")
-                or headers.get(b"x-forwarded-uri", b"").decode("latin1")
-            )
-            matched_path = raw_matched.split("?")[0] if raw_matched else ""
+    @staticmethod
+    def _to_str(val) -> str:
+        if isinstance(val, bytes):
+            return val.decode("latin1", errors="ignore")
+        if isinstance(val, str):
+            return val
+        return ""
 
-            if matched_path and matched_path.startswith("/") and not matched_path.startswith("/api/index.py"):
-                scope["path"] = matched_path
-            elif path in ("/api/index.py", "/api", "/api/", "/api/index"):
-                scope["path"] = "/"
-            elif path.startswith("/api/index.py/"):
-                scope["path"] = path[len("/api/index.py") :]
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope.get("type") == "http":
+            try:
+                path = scope.get("path", "")
+                raw_matched = ""
+
+                # Headers in ASGI may be bytes or strings depending on environment/adapter
+                headers_list = scope.get("headers") or []
+                for item in headers_list:
+                    if isinstance(item, (list, tuple)) and len(item) == 2:
+                        k = self._to_str(item[0]).lower()
+                        if k in ("x-matched-path", "x-forwarded-uri", "x-vercel-matched-path"):
+                            raw_matched = self._to_str(item[1])
+                            break
+
+                matched_path = raw_matched.split("?")[0] if raw_matched else ""
+
+                if matched_path and matched_path.startswith("/") and not matched_path.startswith("/api/index.py"):
+                    scope["path"] = matched_path
+                elif path in ("/api/index.py", "/api", "/api/", "/api/index"):
+                    scope["path"] = "/"
+                elif path.startswith("/api/index.py/"):
+                    scope["path"] = path[len("/api/index.py") :]
+            except Exception as exc:
+                # Never let middleware fail a function invocation
+                import sys
+                print(f"[VercelPathMiddleware Warning] {exc}", file=sys.stderr)
 
         await self.app(scope, receive, send)
 
