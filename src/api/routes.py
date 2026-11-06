@@ -80,6 +80,8 @@ async def get_dashboard(request: Request):
             "global_roas": global_roas,
             "channels": settings.channels,
             "channel_names": CHANNEL_DISPLAY_NAMES,
+            "settings": settings,
+            "n_weeks": settings.n_weeks,
         },
     )
 

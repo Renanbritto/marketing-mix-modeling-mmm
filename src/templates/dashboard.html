@@ -25,7 +25,9 @@
             --accent-rose: #f43f5e;
             --accent-purple: #8b5cf6;
             --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            --gradient-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --sidebar-width: 270px;
+            --sidebar-collapsed-width: 76px;
         }
 
         * {
@@ -40,107 +42,422 @@
             color: var(--text-primary);
             line-height: 1.5;
             min-height: 100vh;
-            padding-bottom: 60px;
+            overflow-x: hidden;
         }
 
-        /* Top Navigation */
-        .navbar {
-            background-color: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            padding: 16px 32px;
+        /* App Layout with Left Sidebar */
+        .app-layout {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
         }
 
-        .nav-brand {
+        /* Sidebar Backdrop for Mobile */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; bottom: 0; left: 0; right: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 90;
+        }
+
+        /* Left Collapsible Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease;
+            overflow-x: hidden;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 18px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            min-height: 72px;
+            gap: 8px;
+        }
+
+        .sidebar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .brand-icon {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
             background: var(--gradient-primary);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 19px;
+            color: #fff;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
         }
 
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .brand-text {
+            opacity: 0;
+            display: none;
+        }
+
         .brand-title {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 700;
             letter-spacing: -0.02em;
+            color: var(--text-primary);
         }
 
         .brand-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .nav-actions {
+        .btn-toggle-sidebar {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .badge-status {
-            display: inline-flex;
+        .btn-toggle-sidebar:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+        }
+
+        .sidebar.collapsed .btn-toggle-sidebar svg {
+            transform: rotate(180deg);
+        }
+
+        /* Sidebar Navigation Menu */
+        .sidebar-nav {
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 12px 4px 12px;
+            white-space: nowrap;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar.collapsed .nav-section-title {
+            opacity: 0;
+            display: none;
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            gap: 12px;
+            padding: 12px 14px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            font-family: inherit;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+            border-color: transparent;
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+        }
+
+        .nav-label {
+            white-space: nowrap;
+            transition: opacity 0.2s ease;
+            flex: 1;
+        }
+
+        .sidebar.collapsed .nav-label {
+            opacity: 0;
+            display: none;
+        }
+
+        .nav-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background-color: rgba(6, 182, 212, 0.2);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item.active .nav-badge {
+            background-color: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .sidebar.collapsed .nav-badge {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
             background-color: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 8px;
             color: var(--accent-emerald);
-            border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .status-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .system-status {
+            justify-content: center;
+            padding: 8px;
         }
 
         .badge-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
+            min-width: 7px;
             background-color: var(--accent-emerald);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--accent-emerald);
         }
 
-        .btn-link {
-            text-decoration: none;
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .sidebar.collapsed .footer-links {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            text-decoration: none;
+            font-size: 0.75rem;
             font-weight: 500;
             transition: color 0.2s ease;
         }
-        .btn-link:hover {
+
+        .footer-link:hover {
             color: var(--accent-blue);
+        }
+
+        .sidebar.collapsed .footer-link-text {
+            display: none;
+        }
+
+        /* Main Content Wrapper */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .sidebar.collapsed ~ .main-wrapper {
+            margin-left: var(--sidebar-collapsed-width);
+            width: calc(100% - var(--sidebar-collapsed-width));
+        }
+
+        /* Top Header Bar */
+        .topbar {
+            background-color: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mobile-toggle-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb-active {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-stat {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .topbar-stat strong {
+            color: var(--text-primary);
         }
 
         /* Container */
         .container {
             max-width: 1440px;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 28px 32px;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 24px;
+            width: 100%;
+        }
+
+        /* Tab Panes */
+        .tab-pane {
+            display: none;
+            flex-direction: column;
+            gap: 28px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .tab-pane.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* KPI Metric Cards Grid */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 20px;
         }
 
@@ -160,13 +477,16 @@
             background: var(--gradient-primary);
             opacity: 0.8;
         }
+        .kpi-card.emerald::before {
+            background: var(--gradient-emerald);
+        }
         .kpi-card:hover {
             transform: translateY(-2px);
             border-color: rgba(59, 130, 246, 0.4);
         }
 
         .kpi-label {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -175,7 +495,7 @@
         }
 
         .kpi-value {
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: 800;
             letter-spacing: -0.03em;
             color: var(--text-primary);
@@ -196,6 +516,8 @@
             justify-content: space-between;
             align-items: flex-end;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .section-title {
@@ -217,19 +539,24 @@
             padding: 24px;
         }
 
-        /* Two columns layout */
+        /* Grids */
         .grid-2col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
         }
-        @media (max-width: 1024px) {
-            .grid-2col {
+        .grid-sim {
+            display: grid;
+            grid-template-columns: 440px 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 1120px) {
+            .grid-2col, .grid-sim {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Channels Table */
+        /* Table */
         .table-responsive {
             overflow-x: auto;
         }
@@ -297,17 +624,43 @@
             border: 1px solid rgba(244, 63, 94, 0.3);
         }
 
-        /* Interactive Widgets: Simulator and Optimizer */
-        .interactive-panel {
+        /* Presets & Controls */
+        .preset-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn-preset {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-preset:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+            background-color: rgba(59, 130, 246, 0.12);
         }
 
         .slider-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.02);
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .slider-header {
@@ -318,14 +671,18 @@
         }
 
         .slider-channel-name {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-primary);
         }
 
         .slider-val {
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--accent-cyan);
+            background-color: rgba(6, 182, 212, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
         }
 
         input[type="range"] {
@@ -374,203 +731,549 @@
             transform: translateY(0);
         }
 
-        .result-box {
-            background-color: rgba(255, 255, 255, 0.02);
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 16px;
-            margin-top: 16px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-secondary);
         }
 
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.85rem;
-        }
-        .result-row:last-child {
-            border-bottom: none;
+        /* Mobile Breakpoint */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width) !important;
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .sidebar.collapsed ~ .main-wrapper {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .mobile-toggle-btn {
+                display: flex;
+            }
+            .sidebar-backdrop.active {
+                display: block;
+            }
+            .topbar {
+                padding: 14px 18px;
+            }
+            .container {
+                padding: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation -->
-    <nav class="navbar">
-        <div class="nav-brand">
-            <div class="brand-icon">M</div>
-            <div>
-                <div class="brand-title">{{ app_name }}</div>
-                <div class="brand-subtitle">Econometric Marketing Mix Modeling & Budget Optimizer</div>
-            </div>
-        </div>
-        <div class="nav-actions">
-            <span class="badge-status">
-                <span class="badge-dot"></span>
-                Motor Ativo • R² {{ metrics.r_squared }}
-            </span>
-            <a href="/docs" class="btn-link" target="_blank">Swagger API &rarr;</a>
-            <a href="https://github.com/Renanbritto/marketing-mix-modeling-mmm" class="btn-link" target="_blank">GitHub &rarr;</a>
-        </div>
-    </nav>
+    <div class="app-layout">
 
-    <main class="container">
+        <!-- Mobile Backdrop -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
-        <!-- Executive KPI Cards -->
-        <section class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">ROAS Médio Histórico</div>
-                <div class="kpi-value" id="kpi-roas">{{ "%.2f"|format(global_roas) }}x</div>
-                <div class="kpi-subtext">Retorno por real investido</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Receita Anual Total</div>
-                <div class="kpi-value" id="kpi-revenue">R$ {{ "{:,.0f}".format(total_revenue).replace(",", ".") }}</div>
-                <div class="kpi-subtext">Receita global observada</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Investimento Total em Mídia</div>
-                <div class="kpi-value" id="kpi-spend">R$ {{ "{:,.0f}".format(total_budget).replace(",", ".") }}</div>
-                <div class="kpi-subtext">5 canais ativos em 104 semanas</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Acurácia do Modelo (R²)</div>
-                <div class="kpi-value" style="color: var(--accent-emerald);">{{ metrics.r_squared }}</div>
-                <div class="kpi-subtext">MAPE: {{ metrics.mape_pct }}% • Ridge Regularized</div>
-            </div>
-        </section>
-
-        <!-- Main Decomposition Chart -->
-        <section class="chart-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Decomposição Econométrica de Receita</h2>
-                    <p class="section-desc">Contribuição incremental de cada canal de mídia vs. baseline orgânico e sazonalidade</p>
-                </div>
-            </div>
-            <div id="chart-decomposition" style="height: 420px;"></div>
-        </section>
-
-        <!-- S-Curves & Response Curves -->
-        <section class="chart-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Curvas de Saturação de Hill (S-Curves)</h2>
-                    <p class="section-desc">Comportamento de rendimentos decrescentes e pontos de saturação marginal (mROAS < 1.0)</p>
-                </div>
-            </div>
-            <div id="chart-response-curves" style="height: 380px;"></div>
-        </section>
-
-        <!-- Channel Health & Efficiency Matrix -->
-        <section class="chart-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Matriz de Eficiência e Saúde dos Canais</h2>
-                    <p class="section-desc">Diagnóstico marginal (mROAS) orientando decisões de aceleração, corte ou realocação</p>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table id="table-channels">
-                    <thead>
-                        <tr>
-                            <th>Canal de Mídia</th>
-                            <th>Investimento Total</th>
-                            <th>Receita Atribuída</th>
-                            <th>ROAS Médio</th>
-                            <th>ROAS Marginal (mROAS)</th>
-                            <th>Contribuição</th>
-                            <th>Status de Saúde</th>
-                            <th>Recomendação Estratégica</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <tr><td colspan="8" style="text-align:center;">Carregando dados...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Interactive Tools: What-if Simulator + SciPy Optimizer -->
-        <div class="grid-2col">
+        <!-- Left Retractable Sidebar -->
+        <aside class="sidebar" id="sidebar">
             
-            <!-- What-if Simulator -->
-            <div class="chart-card interactive-panel">
-                <div>
-                    <h2 class="section-title">Simulador de Cenários (What-if)</h2>
-                    <p class="section-desc">Ajuste os investimentos semanais e visualize a projeção de receita imediata</p>
+            <!-- Header Brand & Retract Button -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand-icon">M</div>
+                    <div class="brand-text">
+                        <div class="brand-title">MMM Engine</div>
+                        <div class="brand-subtitle">Marketing Mix Modeling</div>
+                    </div>
                 </div>
+                <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Recolher / Expandir Menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+            </div>
 
-                <div id="sliders-container" style="display:flex; flex-direction:column; gap:16px;">
-                    <!-- Sliders injected by JS -->
-                </div>
+            <!-- Navigation Menu -->
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Navegação Analítica</div>
 
-                <button class="btn-action" onclick="runSimulation()">
-                    <span>Simular Cenário</span> &rarr;
+                <button class="nav-item active" data-tab="tab-overview" onclick="switchTab('tab-overview')" title="Visão Geral & Modelagem">
+                    <div class="nav-icon">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Visão Geral & Modelagem</span>
                 </button>
 
-                <div class="result-box" id="sim-results">
-                    <div class="result-row">
-                        <span>Orçamento Semanal:</span>
-                        <strong class="mono" id="sim-total-budget">-</strong>
+                <button class="nav-item" data-tab="tab-simulation" onclick="switchTab('tab-simulation')" title="Simulador de Cenários (What-If)">
+                    <div class="nav-icon">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
                     </div>
-                    <div class="result-row">
-                        <span>Receita Semanal Projetada:</span>
-                        <strong class="mono" style="color:var(--accent-emerald);" id="sim-projected-revenue">-</strong>
+                    <span class="nav-label">Simulador de Cenários</span>
+                    <span class="nav-badge">What-If</span>
+                </button>
+
+                <button class="nav-item" data-tab="tab-optimizer" onclick="switchTab('tab-optimizer')" title="Otimizador de Orçamento (SLSQP)">
+                    <div class="nav-icon">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m13 2-2 2.5V8l3-3 7 7-3 3h-3.5L12 12.5 9 15.5 2 8.5 7 3.5 10 6.5l2-2.5V2z"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
                     </div>
-                    <div class="result-row">
-                        <span>ROAS Global do Cenário:</span>
-                        <strong class="mono" id="sim-roas-global">-</strong>
-                    </div>
+                    <span class="nav-label">Otimizador de Orçamento</span>
+                    <span class="nav-badge" style="background-color:rgba(16,185,129,0.2); color:var(--accent-emerald); border-color:rgba(16,185,129,0.4);">SLSQP</span>
+                </button>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <span class="badge-dot"></span>
+                    <span class="status-text">Motor Ativo • R² {{ metrics.r_squared }}</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/docs" target="_blank" class="footer-link" title="Swagger API">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                        <span class="footer-link-text">Swagger API</span>
+                    </a>
+                    <a href="https://github.com/Renanbritto/marketing-mix-modeling-mmm" target="_blank" class="footer-link" title="GitHub">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        <span class="footer-link-text">GitHub</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Constrained SciPy Optimizer -->
-            <div class="chart-card interactive-panel">
-                <div>
-                    <h2 class="section-title">Otimizador de Orçamento (SciPy SLSQP)</h2>
-                    <p class="section-desc">Calcula a distribuição matemática perfeita que maximiza a receita com base em restrições</p>
-                </div>
+        </aside>
 
-                <div class="slider-group">
-                    <div class="slider-header">
-                        <span class="slider-channel-name">Orçamento Semanal Total para Otimização (BRL)</span>
-                        <span class="slider-val" id="opt-budget-display">R$ 102.000</span>
-                    </div>
-                    <input type="range" id="opt-total-budget" min="20000" max="250000" step="2000" value="102000" oninput="document.getElementById('opt-budget-display').innerText = 'R$ ' + Number(this.value).toLocaleString('pt-BR');">
-                </div>
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
 
-                <button class="btn-action" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);" onclick="runOptimization()">
-                    <span>Calcular Alocação Ótima</span> &rarr;
-                </button>
-
-                <div class="result-box" id="opt-results">
-                    <div class="result-row">
-                        <span>Receita Máxima Otimizada:</span>
-                        <strong class="mono" style="color:var(--accent-cyan);" id="opt-projected-revenue">-</strong>
-                    </div>
-                    <div class="result-row">
-                        <span>Lift Potencial vs Alocação Uniforme:</span>
-                        <strong class="mono" style="color:var(--accent-emerald);" id="opt-lift">-</strong>
-                    </div>
-                    <div class="result-row">
-                        <span>ROAS Global Otimizado:</span>
-                        <strong class="mono" id="opt-roas-global">-</strong>
+            <!-- Top Header Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle-btn" onclick="toggleSidebar()" title="Abrir menu lateral">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb">
+                        <span>Marketing Mix Modeling</span>
+                        <span>/</span>
+                        <span class="breadcrumb-active" id="active-tab-title">Visão Geral & Modelagem</span>
                     </div>
                 </div>
+                <div class="topbar-right">
+                    <div class="topbar-stat">
+                        Série: <strong>{{ (n_weeks / 52)|round(1) if n_weeks else 2 }} anos ({{ n_weeks if n_weeks else 104 }} sem)</strong>
+                    </div>
+                </div>
+            </header>
 
-                <div id="opt-chart" style="height: 220px; margin-top: 10px;"></div>
-            </div>
+            <main class="container">
+
+                <!-- ========================================== -->
+                <!-- TAB 1: VISÃO GERAL & MODELAGEM             -->
+                <!-- ========================================== -->
+                <div id="tab-overview" class="tab-pane active">
+
+                    <!-- Executive KPI Cards -->
+                    <section class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">ROAS Médio Histórico</div>
+                            <div class="kpi-value" id="kpi-roas">{{ "%.2f"|format(global_roas) }}x</div>
+                            <div class="kpi-subtext">Retorno por real investido</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Receita Total Observada</div>
+                            <div class="kpi-value" id="kpi-revenue">R$ {{ "{:,.0f}".format(total_revenue).replace(",", ".") }}</div>
+                            <div class="kpi-subtext">Histórico de {{ n_weeks if n_weeks else 104 }} semanas</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Investimento Total em Mídia</div>
+                            <div class="kpi-value" id="kpi-spend">R$ {{ "{:,.0f}".format(total_budget).replace(",", ".") }}</div>
+                            <div class="kpi-subtext">5 canais ativos multicanal</div>
+                        </div>
+                        <div class="kpi-card emerald">
+                            <div class="kpi-label">Acurácia do Modelo (R²)</div>
+                            <div class="kpi-value" style="color: var(--accent-emerald);">{{ metrics.r_squared }}</div>
+                            <div class="kpi-subtext">MAPE: {{ metrics.mape_pct }}% • Ridge Regularized</div>
+                        </div>
+                    </section>
+
+                    <!-- Main Decomposition Chart -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Decomposição Econométrica de Receita</h2>
+                                <p class="section-desc">Contribuição incremental de cada canal de mídia vs. baseline orgânico e sazonalidade</p>
+                            </div>
+                        </div>
+                        <div id="chart-decomposition" style="height: 420px;"></div>
+                    </section>
+
+                    <!-- S-Curves & Response Curves -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Curvas de Saturação de Hill (S-Curves)</h2>
+                                <p class="section-desc">Comportamento de rendimentos decrescentes e pontos de saturação marginal (mROAS &lt; 1.0)</p>
+                            </div>
+                        </div>
+                        <div id="chart-response-curves" style="height: 380px;"></div>
+                    </section>
+
+                    <!-- Channel Health & Efficiency Matrix -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Matriz de Eficiência e Saúde dos Canais</h2>
+                                <p class="section-desc">Diagnóstico marginal (mROAS) orientando decisões de aceleração, corte ou realocação</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="table-channels">
+                                <thead>
+                                    <tr>
+                                        <th>Canal de Mídia</th>
+                                        <th>Investimento Total</th>
+                                        <th>Receita Atribuída</th>
+                                        <th>ROAS Médio</th>
+                                        <th>ROAS Marginal (mROAS)</th>
+                                        <th>Contribuição</th>
+                                        <th>Status de Saúde</th>
+                                        <th>Recomendação Estratégica</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">
+                                    <tr><td colspan="8" style="text-align:center;">Carregando dados...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- ========================================== -->
+                <!-- TAB 2: SIMULADOR DE CENÁRIOS (WHAT-IF)     -->
+                <!-- ========================================== -->
+                <div id="tab-simulation" class="tab-pane">
+
+                    <!-- Simulator Header & Presets -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Simulador de Cenários (What-if)</h2>
+                                <p class="section-desc">Ajuste o orçamento semanal de cada canal e veja o impacto instantâneo na receita estimada e no ROAS marginal</p>
+                            </div>
+                        </div>
+
+                        <div class="preset-buttons">
+                            <span style="font-size:0.8rem; color:var(--text-muted); align-self:center; margin-right:4px;">Cenários Prontos:</span>
+                            <button class="btn-preset" onclick="applyPreset('default')">🔄 Padrão Histórico (R$ 102k)</button>
+                            <button class="btn-preset" onclick="applyPreset('scale_up')">🚀 +20% Escala Acelerada</button>
+                            <button class="btn-preset" onclick="applyPreset('scale_down')">🛡️ -20% Corte Conservador</button>
+                            <button class="btn-preset" onclick="applyPreset('high_efficiency')">🎯 Foco em Alta Eficiência (Google + CRM)</button>
+                            <button class="btn-preset" onclick="applyPreset('brand_social')">📱 Foco em Redes & Influenciadores</button>
+                        </div>
+                    </section>
+
+                    <!-- Simulation KPIs -->
+                    <section class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Orçamento Semanal Simulado</div>
+                            <div class="kpi-value mono" id="sim-total-budget">-</div>
+                            <div class="kpi-subtext">Soma alocada nos 5 canais</div>
+                        </div>
+                        <div class="kpi-card emerald">
+                            <div class="kpi-label">Receita Semanal Projetada</div>
+                            <div class="kpi-value mono" style="color:var(--accent-emerald);" id="sim-projected-revenue">-</div>
+                            <div class="kpi-subtext">Modelo Ridge + Hill Saturation</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">ROAS Global do Cenário</div>
+                            <div class="kpi-value mono" style="color:var(--accent-cyan);" id="sim-roas-global">-</div>
+                            <div class="kpi-subtext">Receita total / Orçamento semanal</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Baseline Orgânico Semanal</div>
+                            <div class="kpi-value mono" id="sim-base-organic">-</div>
+                            <div class="kpi-subtext">Receita garantida sem investimento</div>
+                        </div>
+                    </section>
+
+                    <!-- Simulation Grid (Controls + Breakdown Chart) -->
+                    <div class="grid-sim">
+
+                        <!-- Left Column: Channel Sliders -->
+                        <div class="chart-card" style="display:flex; flex-direction:column; gap:16px;">
+                            <div>
+                                <h3 style="font-size:1.1rem; font-weight:700;">Ajuste de Verba por Canal</h3>
+                                <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">
+                                    Arraste os seletores para simular a redistribuição
+                                </p>
+                            </div>
+
+                            <div id="sliders-container" style="display:flex; flex-direction:column; gap:12px;">
+                                <!-- Sliders injected by JS -->
+                            </div>
+
+                            <div style="display:flex; gap:12px; margin-top:8px;">
+                                <button class="btn-action" style="flex:1;" onclick="runSimulation()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <span>Simular Cenário</span>
+                                </button>
+                                <button class="btn-secondary" onclick="applyPreset('default')">
+                                    <span>Resetar</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Visual Breakdown -->
+                        <div class="chart-card" style="display:flex; flex-direction:column; gap:16px;">
+                            <div>
+                                <h3 style="font-size:1.1rem; font-weight:700;">Investimento vs. Receita Atribuída no Cenário</h3>
+                                <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;">
+                                    Comparação de quanto cada canal recebe de verba vs. o retorno estimado gerado
+                                </p>
+                            </div>
+                            <div id="chart-sim-breakdown" style="height: 380px;"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- Detailed Simulation Breakdown Table -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Detalhamento do Cenário Simulado</h2>
+                                <p class="section-desc">Métricas granulares estimadas por canal para a combinação de investimentos acima</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Canal de Mídia</th>
+                                        <th>Investimento Semanal</th>
+                                        <th>Fatia da Verba (%)</th>
+                                        <th>Receita Projetada</th>
+                                        <th>ROAS Médio</th>
+                                        <th>ROAS Marginal (mROAS)</th>
+                                        <th>Contribuição (%)</th>
+                                        <th>Diagnóstico de Saúde</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sim-table-body">
+                                    <tr><td colspan="8" style="text-align:center;">Clique em 'Simular Cenário' para carregar...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- ========================================== -->
+                <!-- TAB 3: OTIMIZADOR DE ORÇAMENTO (SLSQP)     -->
+                <!-- ========================================== -->
+                <div id="tab-optimizer" class="tab-pane">
+
+                    <!-- Optimizer Header -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Otimizador de Orçamento Matemático (SciPy SLSQP)</h2>
+                                <p class="section-desc">Algoritmo de programação não linear com restrições que encontra a distribuição ótima global de investimento</p>
+                            </div>
+                        </div>
+
+                        <div class="grid-2col">
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span class="slider-channel-name">Orçamento Semanal Total Disponível (BRL)</span>
+                                        <span class="slider-val" id="opt-budget-display">R$ 102.000</span>
+                                    </div>
+                                    <input type="range" id="opt-total-budget" min="20000" max="250000" step="2000" value="102000" oninput="document.getElementById('opt-budget-display').innerText = 'R$ ' + Number(this.value).toLocaleString('pt-BR');">
+                                </div>
+
+                                <div style="display:flex; gap:12px;">
+                                    <button class="btn-action" style="background: var(--gradient-emerald); flex:1;" onclick="runOptimization()">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-2 2.5V8l3-3 7 7-3 3h-3.5L12 12.5 9 15.5 2 8.5 7 3.5 10 6.5l2-2.5V2z"/></svg>
+                                        <span>Calcular Alocação Ótima</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Optimizer KPI Summary -->
+                            <div class="kpi-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="kpi-card" style="padding:16px;">
+                                    <div class="kpi-label">Receita Máxima</div>
+                                    <div class="kpi-value mono" style="font-size:1.4rem; color:var(--accent-cyan);" id="opt-projected-revenue">-</div>
+                                    <div class="kpi-subtext">Por semana</div>
+                                </div>
+                                <div class="kpi-card emerald" style="padding:16px;">
+                                    <div class="kpi-label">Lift vs Uniforme</div>
+                                    <div class="kpi-value mono" style="font-size:1.4rem; color:var(--accent-emerald);" id="opt-lift">-</div>
+                                    <div class="kpi-subtext">Ganho de eficiência</div>
+                                </div>
+                                <div class="kpi-card" style="padding:16px;">
+                                    <div class="kpi-label">ROAS Otimizado</div>
+                                    <div class="kpi-value mono" style="font-size:1.4rem;" id="opt-roas-global">-</div>
+                                    <div class="kpi-subtext">Retorno global</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Optimal Allocation Chart -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Distribuição de Verba Ótima Recomendada</h2>
+                                <p class="section-desc">Valores calculados pelo solver SLSQP para maximizar o retorno sob saturação marginal</p>
+                            </div>
+                        </div>
+                        <div id="opt-chart" style="height: 320px;"></div>
+                    </section>
+
+                    <!-- Optimal vs Current Comparison Table -->
+                    <section class="chart-card">
+                        <div class="section-header">
+                            <div>
+                                <h2 class="section-title">Comparativo: Alocação Atual vs. Alocação Ótima</h2>
+                                <p class="section-desc">Recomendações matemáticas de expansão ou corte por canal</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Canal de Mídia</th>
+                                        <th>Investimento Atual / Sem</th>
+                                        <th>Alocação Ótima Recomendada</th>
+                                        <th>Variação Proposta</th>
+                                        <th>ROAS Projetado</th>
+                                        <th>ROAS Marginal (mROAS)</th>
+                                        <th>Status de Eficiência</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="opt-table-body">
+                                    <tr><td colspan="7" style="text-align:center;">Carregando otimização...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+            </main>
 
         </div>
 
-    </main>
+    </div>
 
     <script>
         const formatBRL = (val) => "R$ " + Number(val).toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
         let channelDefaults = {};
+        const defaultSpends = {
+            "meta_ads": 38000,
+            "google_ads": 32000,
+            "tiktok_ads": 15000,
+            "influencers": 12000,
+            "crm_email": 5000
+        };
+
+        const tabTitles = {
+            'tab-overview': 'Visão Geral & Modelagem',
+            'tab-simulation': 'Simulador de Cenários (What-If)',
+            'tab-optimizer': 'Otimizador de Orçamento (SLSQP)'
+        };
+
+        // Toggle Sidebar Collapsed/Expanded
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const isMobile = window.innerWidth <= 900;
+
+            if (isMobile) {
+                sidebar.classList.toggle('mobile-open');
+                if (backdrop) backdrop.classList.toggle('active');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                try {
+                    localStorage.setItem('mmm_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+                } catch(e) {}
+            }
+
+            // Trigger Plotly Resize after animation
+            setTimeout(() => {
+                const charts = ['chart-decomposition', 'chart-response-curves', 'chart-sim-breakdown', 'opt-chart'];
+                charts.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.data) {
+                        Plotly.Plots.resize(el);
+                    }
+                });
+            }, 270);
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.toggle('active', pane.id === tabId);
+            });
+
+            // Update Breadcrumb Title
+            const titleEl = document.getElementById('active-tab-title');
+            if (titleEl && tabTitles[tabId]) {
+                titleEl.innerText = tabTitles[tabId];
+            }
+
+            // Close mobile drawer if open
+            if (window.innerWidth <= 900) {
+                const sidebar = document.getElementById('sidebar');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (backdrop) backdrop.classList.remove('active');
+            }
+
+            // Update URL hash without scroll
+            if (history.replaceState) {
+                history.replaceState(null, null, '#' + tabId.replace('tab-', ''));
+            }
+
+            // Trigger Plotly Resize so charts in newly visible tab fit perfectly
+            setTimeout(() => {
+                const charts = ['chart-decomposition', 'chart-response-curves', 'chart-sim-breakdown', 'opt-chart'];
+                charts.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.data) {
+                        Plotly.Plots.resize(el);
+                    }
+                });
+            }, 60);
+        }
 
         // 1. Load Initial Channel Summary Table
         async function loadChannelSummary() {
@@ -687,17 +1390,16 @@
         }
 
         // 4. Build What-If Simulator Sliders
+        let simDebounceTimer = null;
+        function onSliderInput(channel, val) {
+            document.getElementById(`val-${channel}`).innerText = formatBRL(val);
+            clearTimeout(simDebounceTimer);
+            simDebounceTimer = setTimeout(runSimulation, 220);
+        }
+
         function buildSimulatorSliders(channels) {
             const container = document.getElementById("sliders-container");
             container.innerHTML = "";
-
-            const defaultSpends = {
-                "meta_ads": 38000,
-                "google_ads": 32000,
-                "tiktok_ads": 15000,
-                "influencers": 12000,
-                "crm_email": 5000
-            };
 
             channels.forEach(ch => {
                 const val = defaultSpends[ch.channel] || 20000;
@@ -709,7 +1411,7 @@
                         <span class="slider-val" id="val-${ch.channel}">${formatBRL(val)}</span>
                     </div>
                     <input type="range" id="slider-${ch.channel}" min="0" max="80000" step="1000" value="${val}"
-                           oninput="document.getElementById('val-${ch.channel}').innerText = formatBRL(this.value)">
+                           oninput="onSliderInput('${ch.channel}', this.value)">
                 `;
                 container.appendChild(div);
             });
@@ -717,7 +1419,45 @@
             runSimulation();
         }
 
-        // 5. Run What-If Simulation
+        // 5. Presets Logic for Simulator
+        function applyPreset(type) {
+            let newSpends = { ...defaultSpends };
+
+            if (type === 'default') {
+                newSpends = { ...defaultSpends };
+            } else if (type === 'scale_up') {
+                for (let ch in newSpends) newSpends[ch] = Math.round((newSpends[ch] * 1.2) / 1000) * 1000;
+            } else if (type === 'scale_down') {
+                for (let ch in newSpends) newSpends[ch] = Math.round((newSpends[ch] * 0.8) / 1000) * 1000;
+            } else if (type === 'high_efficiency') {
+                newSpends = {
+                    "meta_ads": 28000,
+                    "google_ads": 42000,
+                    "tiktok_ads": 10000,
+                    "influencers": 10000,
+                    "crm_email": 12000
+                };
+            } else if (type === 'brand_social') {
+                newSpends = {
+                    "meta_ads": 48000,
+                    "google_ads": 22000,
+                    "tiktok_ads": 22000,
+                    "influencers": 16000,
+                    "crm_email": 4000
+                };
+            }
+
+            for (let ch in newSpends) {
+                const slider = document.getElementById(`slider-${ch}`);
+                const display = document.getElementById(`val-${ch}`);
+                if (slider) slider.value = newSpends[ch];
+                if (display) display.innerText = formatBRL(newSpends[ch]);
+            }
+
+            runSimulation();
+        }
+
+        // 6. Run What-If Simulation
         async function runSimulation() {
             const allocation = {};
             const channels = ["meta_ads", "google_ads", "tiktok_ads", "influencers", "crm_email"];
@@ -734,15 +1474,77 @@
                 });
                 const data = await res.json();
 
+                // Update Simulator KPI Cards
                 document.getElementById("sim-total-budget").innerText = formatBRL(data.total_weekly_budget);
                 document.getElementById("sim-projected-revenue").innerText = formatBRL(data.projected_weekly_revenue);
                 document.getElementById("sim-roas-global").innerText = data.roas_global.toFixed(2) + "x";
+                document.getElementById("sim-base-organic").innerText = formatBRL(data.base_organic_revenue);
+
+                // Update Visual Breakdown Chart (Spend vs Attributed Revenue)
+                if (data.channels && data.channels.length > 0) {
+                    const chLabels = data.channels.map(c => c.display_name.split(' (')[0]);
+                    const spends = data.channels.map(c => c.spend);
+                    const revenues = data.channels.map(c => c.attributed_revenue);
+
+                    const traceSpend = {
+                        x: chLabels,
+                        y: spends,
+                        name: 'Investimento Semanal',
+                        type: 'bar',
+                        marker: { color: 'rgba(59, 130, 246, 0.75)' }
+                    };
+
+                    const traceRev = {
+                        x: chLabels,
+                        y: revenues,
+                        name: 'Receita Atribuída Projetada',
+                        type: 'bar',
+                        marker: { color: 'rgba(16, 185, 129, 0.85)' }
+                    };
+
+                    const layout = {
+                        paper_bgcolor: 'transparent',
+                        plot_bgcolor: 'transparent',
+                        barmode: 'group',
+                        font: { color: '#94a3b8', family: 'Inter' },
+                        margin: { t: 20, r: 20, l: 60, b: 40 },
+                        legend: { orientation: 'h', y: -0.2 },
+                        xaxis: { gridcolor: '#1e293b' },
+                        yaxis: { gridcolor: '#1e293b', tickprefix: 'R$ ' },
+                        hovermode: 'x unified'
+                    };
+
+                    Plotly.newPlot('chart-sim-breakdown', [traceSpend, traceRev], layout, { responsive: true, displayModeBar: false });
+
+                    // Update Detailed Simulation Table
+                    const tbody = document.getElementById("sim-table-body");
+                    if (tbody) {
+                        tbody.innerHTML = "";
+                        data.channels.forEach(ch => {
+                            const pctOfBudget = data.total_weekly_budget > 0 
+                                ? (ch.spend / data.total_weekly_budget * 100).toFixed(1) 
+                                : "0.0";
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `
+                                <td><strong>${ch.display_name}</strong></td>
+                                <td class="mono">${formatBRL(ch.spend)}</td>
+                                <td class="mono">${pctOfBudget}%</td>
+                                <td class="mono" style="color:var(--accent-emerald);"><strong>${formatBRL(ch.attributed_revenue)}</strong></td>
+                                <td class="mono"><strong>${ch.roas.toFixed(2)}x</strong></td>
+                                <td class="mono"><span style="color: ${ch.marginal_roas < 1.0 ? '#f43f5e' : '#10b981'}">${ch.marginal_roas.toFixed(3)}</span></td>
+                                <td class="mono">${ch.contribution_pct.toFixed(1)}%</td>
+                                <td><span class="health-badge health-${ch.health}">${ch.health}</span></td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                }
             } catch (err) {
                 console.error("Erro na simulação:", err);
             }
         }
 
-        // 6. Run SciPy Constrained Optimization
+        // 7. Run SciPy Constrained Optimization
         async function runOptimization() {
             const budgetInput = parseFloat(document.getElementById("opt-total-budget").value);
 
@@ -762,7 +1564,7 @@
                 document.getElementById("opt-lift").innerText = "+" + data.lift_vs_uniform_pct.toFixed(1) + "%";
                 document.getElementById("opt-roas-global").innerText = data.roas_global.toFixed(2) + "x";
 
-                // Render mini bar chart with optimal allocation
+                // Render bar chart with optimal allocation
                 const chNames = data.channels.map(c => c.channel.replace("_", " ").toUpperCase());
                 const spends = data.channels.map(c => c.spend);
 
@@ -778,12 +1580,38 @@
                 const layout = {
                     paper_bgcolor: 'transparent',
                     plot_bgcolor: 'transparent',
-                    font: { color: '#94a3b8', family: 'Inter', size: 10 },
-                    margin: { t: 10, r: 10, l: 40, b: 30 },
-                    yaxis: { gridcolor: '#1e293b', zeroline: false }
+                    font: { color: '#94a3b8', family: 'Inter' },
+                    margin: { t: 20, r: 20, l: 60, b: 40 },
+                    xaxis: { gridcolor: '#1e293b' },
+                    yaxis: { gridcolor: '#1e293b', tickprefix: 'R$ ' }
                 };
 
                 Plotly.newPlot('opt-chart', trace, layout, { responsive: true, displayModeBar: false });
+
+                // Render Comparison Table: Current vs Optimal
+                const tbody = document.getElementById("opt-table-body");
+                if (tbody) {
+                    tbody.innerHTML = "";
+                    data.channels.forEach(ch => {
+                        const cur = defaultSpends[ch.channel] || 0;
+                        const diff = ch.spend - cur;
+                        const diffPct = cur > 0 ? (diff / cur * 100) : 0;
+                        const diffColor = diff > 0 ? 'var(--accent-emerald)' : (diff < 0 ? 'var(--accent-rose)' : 'var(--text-muted)');
+                        const diffSign = diff > 0 ? '+' : '';
+
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong>${ch.channel.replace('_', ' ').toUpperCase()}</strong></td>
+                            <td class="mono">${formatBRL(cur)}</td>
+                            <td class="mono" style="color:var(--accent-cyan); font-weight:700;">${formatBRL(ch.spend)}</td>
+                            <td class="mono" style="color:${diffColor}"><strong>${diffSign}${formatBRL(diff)} (${diffSign}${diffPct.toFixed(1)}%)</strong></td>
+                            <td class="mono"><strong>${ch.roas.toFixed(2)}x</strong></td>
+                            <td class="mono"><span style="color:${ch.marginal_roas < 1.0 ? '#f43f5e' : '#10b981'}">${ch.marginal_roas.toFixed(3)}</span></td>
+                            <td><span class="health-badge health-${ch.health}">${ch.health}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
 
             } catch (err) {
                 console.error("Erro na otimização:", err);
@@ -792,6 +1620,22 @@
 
         // Initialize all components on load
         window.addEventListener("DOMContentLoaded", () => {
+            // Restore sidebar state
+            try {
+                if (localStorage.getItem('mmm_sidebar_collapsed') === 'true' && window.innerWidth > 900) {
+                    document.getElementById('sidebar').classList.add('collapsed');
+                }
+            } catch(e) {}
+
+            // Check hash in URL (e.g. #simulation or #optimizer)
+            const hash = window.location.hash.replace("#", "");
+            if (hash) {
+                const targetTab = "tab-" + hash;
+                if (document.getElementById(targetTab)) {
+                    switchTab(targetTab);
+                }
+            }
+
             loadChannelSummary();
             loadDecomposition();
             loadResponseCurves();
