@@ -884,12 +884,19 @@
         }
 
         /* Dark Obsidian Tooltip Override for Plotly Unified & Standard Hover */
-        .js-plotly-plot .plotly .hoverlayer .hovertext path {
-            fill: rgba(19, 21, 28, 0.96) !important;
+        .js-plotly-plot .plotly .hoverlayer .hovertext path,
+        .js-plotly-plot .plotly .hoverlayer .axistext path,
+        .js-plotly-plot .plotly .hoverlayer rect.bg,
+        .js-plotly-plot .plotly .hoverlayer .legend rect.bg {
+            fill: #13151c !important;
+            fill-opacity: 0.96 !important;
             stroke: #38bdf8 !important;
             stroke-width: 1.2px !important;
+            stroke-opacity: 0.85 !important;
         }
-        .js-plotly-plot .plotly .hoverlayer .hovertext text {
+        .js-plotly-plot .plotly .hoverlayer .hovertext text,
+        .js-plotly-plot .plotly .hoverlayer .legend text,
+        .js-plotly-plot .plotly .hoverlayer text {
             fill: #f8fafc !important;
             font-family: 'Inter', sans-serif !important;
         }
