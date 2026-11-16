@@ -1,0 +1,226 @@
+<!-- 
+  CAPA DE PORTFÓLIO (V5 - SMARTPHONE COM ÍCONES DE REDES SOCIAIS -> HUB NEON DE ROAS / R$)
+  Projeto: Marketing Mix Modeling (MMM) & Previsão Preditiva de ROAS
+  Estilo idêntico aos cards do Portfólio: Centralizado, limpo, escuro fosco com contornos neon brilhantes.
+-->
+<div class="mmm-cover-v5">
+  <style>
+    .mmm-cover-v5 {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 185px;
+      background: radial-gradient(circle at 50% 45%, #111a2e 0%, #090d18 65%, #060911 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .mmm-cover-v5 *,
+    .mmm-cover-v5 *::before,
+    .mmm-cover-v5 *::after {
+      box-sizing: border-box;
+    }
+
+    /* Glow atmosférico centralizado atrás dos elementos */
+    .mmm-v5-ambient {
+      position: absolute;
+      width: 210px;
+      height: 120px;
+      background: radial-gradient(circle at 35% 50%, rgba(56, 189, 248, 0.14), rgba(16, 185, 129, 0.10) 55%, transparent 75%);
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .mmm-v5-svg {
+      width: 100%;
+      max-width: 300px;
+      height: 165px;
+      overflow: visible;
+      z-index: 2;
+    }
+
+    /* Animações sutis e elegantes */
+    .mmm-v5-phone {
+      animation: mmmV5Float 4s ease-in-out infinite alternate;
+    }
+
+    .mmm-v5-app1 {
+      animation: mmmV5AppGlow 3.2s ease-in-out 0s infinite;
+    }
+    .mmm-v5-app2 {
+      animation: mmmV5AppGlow 3.2s ease-in-out 0.8s infinite;
+    }
+    .mmm-v5-app3 {
+      animation: mmmV5AppGlow 3.2s ease-in-out 1.6s infinite;
+    }
+    .mmm-v5-app4 {
+      animation: mmmV5AppGlow 3.2s ease-in-out 2.4s infinite;
+    }
+
+    .mmm-v5-hub {
+      transform-origin: 206px 92px;
+      animation: mmmV5HubPulse 3.6s ease-in-out infinite alternate;
+    }
+
+    .mmm-v5-ring-spin {
+      transform-origin: 206px 92px;
+      animation: mmmV5Spin 18s linear infinite;
+    }
+
+    .mmm-v5-dot-blink {
+      animation: mmmV5Blink 2s ease-in-out infinite;
+    }
+
+    .mmm-v5-stream {
+      stroke-dasharray: 4 6;
+      animation: mmmV5Flow 1.8s linear infinite;
+    }
+
+    @keyframes mmmV5Float {
+      0% { transform: translateY(1px); }
+      100% { transform: translateY(-2.5px); }
+    }
+
+    @keyframes mmmV5AppGlow {
+      0%, 100% { opacity: 0.78; }
+      50% { opacity: 1; filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6)); }
+    }
+
+    @keyframes mmmV5HubPulse {
+      0% { transform: scale(0.98); }
+      100% { transform: scale(1.03); }
+    }
+
+    @keyframes mmmV5Spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes mmmV5Blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes mmmV5Flow {
+      to { stroke-dashoffset: -20; }
+    }
+  </style>
+
+  <div class="mmm-v5-ambient"></div>
+
+  <svg class="mmm-v5-svg" viewBox="0 0 300 165" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Feixe de luz cônico (idêntico à estética do card de Detetive) -->
+      <linearGradient id="v5ConeGrad" x1="122" y1="88" x2="195" y2="92" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.28" />
+        <stop offset="60%" stop-color="#10b981" stop-opacity="0.14" />
+        <stop offset="100%" stop-color="#10b981" stop-opacity="0.02" />
+      </linearGradient>
+
+      <filter id="v5GlowCyan" x="-35%" y="-35%" width="170%" height="170%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+
+      <filter id="v5GlowEmerald" x="-35%" y="-35%" width="170%" height="170%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+    </defs>
+
+    <!-- Sombra elíptica no chão sob o celular (igual à sombra do Detetive) -->
+    <ellipse cx="94" cy="138" rx="34" ry="5.5" fill="#03060c" opacity="0.85" />
+
+    <!-- FEIXE DE LUZ CONECTANDO A TELA DO CELULAR AO HUB DE ROAS -->
+    <polygon points="122,58 198,62 198,122 122,116" fill="url(#v5ConeGrad)" />
+
+    <!-- Linhas sutis de fluxo de dados dentro do feixe -->
+    <line x1="124" y1="74" x2="174" y2="82" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.55" class="mmm-v5-stream" />
+    <line x1="124" y1="100" x2="174" y2="98" stroke="#10b981" stroke-width="1.3" stroke-opacity="0.55" class="mmm-v5-stream" />
+
+    <!-- 1. ESQUERDA: SMARTPHONE COM OS 4 SÍMBOLOS DAS REDES SOCIAIS NA TELA -->
+    <g class="mmm-v5-phone">
+      <!-- Corpo externo do Celular -->
+      <rect x="64" y="34" width="60" height="98" rx="10" fill="#101829" stroke="#38bdf8" stroke-width="1.8" filter="url(#v5GlowCyan)" />
+
+      <!-- Tela interna do Celular -->
+      <rect x="68" y="41" width="52" height="84" rx="6" fill="#0b1120" stroke="#1e293b" stroke-width="1" />
+
+      <!-- Speaker / Dynamic Island no topo da tela -->
+      <rect x="86" y="44.5" width="16" height="3" rx="1.5" fill="#38bdf8" opacity="0.75" />
+
+      <!-- GRADE 2x2 DE SÍMBOLOS DAS REDES SOCIAIS NA TELA -->
+
+      <!-- [1] INSTAGRAM (Topo-Esquerda: Câmera Neon Rosa/Magenta) -->
+      <g class="mmm-v5-app1" transform="translate(73, 52)">
+        <rect x="0" y="0" width="19" height="19" rx="5" fill="#1a1329" stroke="#f472b6" stroke-width="1.3" />
+        <rect x="4" y="4" width="11" height="11" rx="3" stroke="#f472b6" stroke-width="1.3" />
+        <circle cx="9.5" cy="9.5" r="2.5" stroke="#f472b6" stroke-width="1.3" />
+        <circle cx="12.8" cy="6.2" r="0.8" fill="#f472b6" />
+      </g>
+
+      <!-- [2] TIKTOK (Topo-Direita: Nota Musical Neon Ciano/ Coral) -->
+      <g class="mmm-v5-app2" transform="translate(96, 52)">
+        <rect x="0" y="0" width="19" height="19" rx="5" fill="#101d2e" stroke="#38bdf8" stroke-width="1.3" />
+        <!-- Sombra coral característica do TikTok -->
+        <path d="M 11.3,5.3 V 12.2 A 2.4,2.4 0 1 1 8.9,9.8 M 11.3,5.3 C 11.3,7 12.7,8 14.3,8" stroke="#f43f5e" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+        <!-- Traço principal ciano/branco -->
+        <path d="M 10.5,4.8 V 11.7 A 2.4,2.4 0 1 1 8.1,9.3 M 10.5,4.8 C 10.5,6.5 11.9,7.5 13.5,7.5" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+
+      <!-- [3] META / FACEBOOK (Base-Esquerda: Símbolo 'f' Neon Azul) -->
+      <g class="mmm-v5-app3" transform="translate(73, 75)">
+        <rect x="0" y="0" width="19" height="19" rx="5" fill="#101c33" stroke="#60a5fa" stroke-width="1.3" />
+        <path d="M 11,15 V 10.2 H 12.8 L 13.1,8 H 11 V 6.7 C 11,6 11.3,5.6 12.1,5.6 H 13.2 V 3.8 C 12.7,3.7 12.1,3.7 11.5,3.7 C 9.8,3.7 8.8,4.7 8.8,6.5 V 8 H 7.2 V 10.2 H 8.8 V 15" fill="#60a5fa" />
+      </g>
+
+      <!-- [4] YOUTUBE / GOOGLE ADS (Base-Direita: Play Neon Coral/Vermelho) -->
+      <g class="mmm-v5-app4" transform="translate(96, 75)">
+        <rect x="0" y="0" width="19" height="19" rx="5" fill="#231320" stroke="#fb7185" stroke-width="1.3" />
+        <polygon points="7.5,6 7.5,13 13.5,9.5" fill="#fb7185" />
+      </g>
+
+      <!-- Mini gráfico de pulso de mídia na parte inferior da tela do celular -->
+      <rect x="73" y="99" width="42" height="17" rx="4" fill="#111c33" stroke="#1e3a5f" stroke-width="1" />
+      <path d="M 77,111 L 84,106 L 91,109 L 99,103 L 106,105 L 111,101" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+
+      <!-- Barra Home Inferior -->
+      <line x1="86" y1="121" x2="102" y2="121" stroke="#475569" stroke-width="1.4" stroke-linecap="round" />
+    </g>
+
+    <!-- 2. DIREITA SUPERIOR: PÍLULA DE STATUS (Mesmo desenho e proporção do card Detetive) -->
+    <g transform="translate(168, 26)">
+      <rect x="0" y="0" width="76" height="20" rx="10" fill="#101827" stroke="#10b981" stroke-width="1.3" stroke-opacity="0.75" />
+      <circle cx="12" cy="10" r="2.8" fill="#10b981" class="mmm-v5-dot-blink" />
+      <text x="43" y="13.5" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="9.5" font-weight="700" letter-spacing="0.02em">
+        ROAS 4.8x
+      </text>
+    </g>
+
+    <!-- 3. DIREITA CENTRAL: LENTE / HUB NEON DE RECEITA REAL (R$ + Crescimento) -->
+    <g class="mmm-v5-hub">
+      <!-- Círculo Externo Brilhante (Mesmo peso visual da Lupa do Detetive) -->
+      <circle cx="206" cy="92" r="30" fill="#0c1624" stroke="#38bdf8" stroke-width="2" filter="url(#v5GlowCyan)" />
+
+      <!-- Anel Interno Tracejado Giratório -->
+      <circle cx="206" cy="92" r="24" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6 4" stroke-opacity="0.7" class="mmm-v5-ring-spin" />
+
+      <!-- 3 Colunas de Receita Crescente dentro do Hub -->
+      <rect x="191" y="96" width="6" height="12" rx="1.5" fill="#38bdf8" opacity="0.75" />
+      <rect x="200" y="90" width="6" height="18" rx="1.5" fill="#38bdf8" opacity="0.9" />
+      <rect x="209" y="81" width="6" height="27" rx="1.5" fill="#10b981" filter="url(#v5GlowEmerald)" />
+
+      <!-- Símbolo R$ Brilhante no Topo Esquerdo Interno do Hub -->
+      <text x="197" y="82" text-anchor="middle" fill="#34d399" font-family="Inter, sans-serif" font-size="10.5" font-weight="800">
+        R$
+      </text>
+
+      <!-- Seta de Lift Diagonal (Cabo/Ponteiro Luminoso) -->
+      <line x1="227" y1="113" x2="241" y2="127" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" filter="url(#v5GlowCyan)" />
+    </g>
+  </svg>
+</div>

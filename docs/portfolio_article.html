@@ -1,0 +1,735 @@
+<!-- 
+  ARTIGO TÉCNICO DE PORTFÓLIO — MARKETING MIX MODELING (MMM) & PREVISÃO PREDITIVA DE ROAS
+  Compatível com o Estúdio de Artigo Técnico (Modo HTML & CSS Ativo)
+-->
+<article class="mmm-tech-article">
+  <style>
+    .mmm-tech-article {
+      --bg-base: #0a0b0e;
+      --bg-surface: #0c0d12;
+      --bg-card: #13151c;
+      --bg-elevated: #191b26;
+      --border-subtle: #222533;
+      --border-highlight: rgba(56, 189, 248, 0.35);
+      --text-primary: #ffffff;
+      --text-secondary: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-violet: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .mmm-tech-article *,
+    .mmm-tech-article *::before,
+    .mmm-tech-article *::after {
+      box-sizing: border-box;
+    }
+
+    /* Cabeçalho Executivo do Artigo */
+    .mmm-art-hero {
+      position: relative;
+      background: radial-gradient(circle at 85% 15%, rgba(99, 102, 241, 0.16), transparent 55%),
+                  radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.12), transparent 55%),
+                  linear-gradient(145deg, #13151c 0%, #0c0d12 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .mmm-art-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mmm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(25, 27, 38, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .mmm-badge.cyan {
+      color: var(--accent-cyan);
+      border-color: rgba(56, 189, 248, 0.35);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .mmm-badge.emerald {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .mmm-badge.violet {
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.35);
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .mmm-art-title {
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .mmm-art-lead {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin: 0 0 24px 0;
+      max-width: 820px;
+    }
+
+    .mmm-art-lead strong {
+      color: var(--text-secondary);
+    }
+
+    /* Grade de KPIs de Impacto */
+    .mmm-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 14px;
+    }
+
+    .mmm-kpi-box {
+      background: rgba(10, 11, 14, 0.65);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .mmm-kpi-box:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+    }
+
+    .mmm-kpi-val {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .mmm-kpi-val.emerald { color: #34d399; }
+    .mmm-kpi-val.cyan { color: var(--accent-cyan); }
+    .mmm-kpi-val.violet { color: #a78bfa; }
+
+    .mmm-kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Seções Gerais */
+    .mmm-section {
+      margin-bottom: 32px;
+    }
+
+    .mmm-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .mmm-section-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .mmm-section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .mmm-prose {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin: 0 0 16px 0;
+    }
+
+    .mmm-prose strong {
+      color: var(--text-secondary);
+    }
+
+    /* Pipeline Arquitetural em 4 Estágios */
+    .mmm-pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .mmm-step-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .mmm-step-tag {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .mmm-step-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .mmm-step-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* Cards de Fundamentação Matemática */
+    .mmm-math-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .mmm-formula-card {
+      background: linear-gradient(160deg, #13151c 0%, #0c0d12 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mmm-formula-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mmm-formula-box {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13.5px;
+      color: #38bdf8;
+      background: #0a0b0e;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      text-align: center;
+      overflow-x: auto;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .mmm-formula-box.violet {
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .mmm-formula-box.emerald {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .mmm-param-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .mmm-param-list li {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .mmm-param-list code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11.5px;
+    }
+
+    /* Matriz de Diagnóstico de Saúde de Canal (mROAS) */
+    .mmm-health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mmm-health-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left-width: 4px;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .mmm-health-card.scaling { border-left-color: #10b981; }
+    .mmm-health-card.efficient { border-left-color: #38bdf8; }
+    .mmm-health-card.saturated { border-left-color: #f59e0b; }
+    .mmm-health-card.over { border-left-color: #f43f5e; }
+
+    .mmm-health-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .mmm-health-name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .mmm-health-card.scaling .mmm-health-name { color: #34d399; }
+    .mmm-health-card.efficient .mmm-health-name { color: #38bdf8; }
+    .mmm-health-card.saturated .mmm-health-name { color: #fbbf24; }
+    .mmm-health-card.over .mmm-health-name { color: #fb7185; }
+
+    .mmm-health-rule {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(10, 11, 14, 0.7);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .mmm-health-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Tabela de Parametrização e Comportamento dos Canais */
+    .mmm-table-wrap {
+      overflow-x: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      margin-top: 14px;
+    }
+
+    .mmm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .mmm-table th {
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .mmm-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(34, 37, 51, 0.6);
+      color: var(--text-muted);
+    }
+
+    .mmm-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mmm-table td strong {
+      color: var(--text-primary);
+    }
+
+    .mmm-mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+    }
+
+    /* Bloco de Código / Arquitetura */
+    .mmm-code-panel {
+      background: #0a0b0e;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .mmm-code-comment { color: #64748b; }
+    .mmm-code-kw { color: #c4b5fd; }
+    .mmm-code-fn { color: #38bdf8; }
+    .mmm-code-num { color: #34d399; }
+
+    /* Callout de Destaque */
+    .mmm-callout {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0%, rgba(19, 21, 28, 0.6) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-top: 18px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+
+    .mmm-callout strong {
+      color: var(--accent-cyan);
+    }
+  </style>
+
+  <!-- HERO: VISÃO EXECUTIVA & KPIS DE IMPACTO -->
+  <header class="mmm-art-hero">
+    <div class="mmm-art-badges">
+      <span class="mmm-badge cyan">Python 3.12 • FastAPI</span>
+      <span class="mmm-badge violet">Econometria • Adstock &amp; Hill</span>
+      <span class="mmm-badge emerald">SciPy SLSQP Optimizer</span>
+      <span class="mmm-badge">Scikit-Learn Ridge</span>
+      <span class="mmm-badge">Plotly.js • 33 Pytest Tests</span>
+    </div>
+
+    <h1 class="mmm-art-title">
+      Marketing Mix Modeling (MMM) &amp; Otimização Não-Linear de ROAS
+    </h1>
+
+    <p class="mmm-art-lead">
+      Com as restrições de privacidade (LGPD, iOS 14.5+ ATT e fim dos cookies de terceiros), modelos de atribuição baseados em cliques (<em>Last-Click</em>) perdem visibilidade sobre o efeito residual de mídia e o ponto de saturação dos canais. Este projeto implementa um <strong>motor econométrico ponta a ponta</strong> que decompõe a receita incremental, estima curvas não-lineares de saturação e resolve matematicamente a alocação ótima de orçamento via programação sequencial quadrática (<strong>SLSQP</strong>).
+    </p>
+
+    <div class="mmm-kpi-strip">
+      <div class="mmm-kpi-box">
+        <div class="mmm-kpi-val emerald">+34.2%</div>
+        <div class="mmm-kpi-label">Potencial de Lift no ROAS Global via Realocação Ótima</div>
+      </div>
+      <div class="mmm-kpi-box">
+        <div class="mmm-kpi-val cyan">5 Canais</div>
+        <div class="mmm-kpi-label">Meta, Google, TikTok, Influencers &amp; CRM (104 Semanas)</div>
+      </div>
+      <div class="mmm-kpi-box">
+        <div class="mmm-kpi-val violet">SLSQP</div>
+        <div class="mmm-kpi-label">Solver Não-Linear com Restrições de Fronteira e Igualdade</div>
+      </div>
+      <div class="mmm-kpi-box">
+        <div class="mmm-kpi-val">&lt; 15ms</div>
+        <div class="mmm-kpi-label">Latência de Simulação What-If em Tempo Real na API</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEÇÃO 1: ARQUITETURA DO PIPELINE -->
+  <section class="mmm-section">
+    <div class="mmm-section-header">
+      <span class="mmm-section-num">01</span>
+      <h2 class="mmm-section-title">Arquitetura do Pipeline Econométrico</h2>
+    </div>
+    <p class="mmm-prose">
+      O sistema transforma séries temporais brutas de investimento publicitário e vendas em recomendações prescritivas de orçamento através de quatro estágios matemáticos acoplados:
+    </p>
+
+    <div class="mmm-pipeline-grid">
+      <div class="mmm-step-card">
+        <span class="mmm-step-tag">Estágio 1 • Memória</span>
+        <h3>Transformação Adstock</h3>
+        <p>Captura a retenção temporal e o efeito <em>carryover</em> da mídia nas semanas subsequentes ao impacto inicial.</p>
+      </div>
+      <div class="mmm-step-card">
+        <span class="mmm-step-tag">Estágio 2 • Saturação</span>
+        <h3>Curvas Sigmoides de Hill</h3>
+        <p>Modela a lei dos rendimentos decrescentes, identificando o ponto de inflexão e meia-saturação de cada canal.</p>
+      </div>
+      <div class="mmm-step-card">
+        <span class="mmm-step-tag">Estágio 3 • Atribuição</span>
+        <h3>Decomposição Ridge (L2)</h3>
+        <p>Separa vendas orgânicas (baseline), sazonalidade e contribuição líquida de cada canal evitando multicolinearidade.</p>
+      </div>
+      <div class="mmm-step-card">
+        <span class="mmm-step-tag">Estágio 4 • Prescrição</span>
+        <h3>Otimizador SciPy SLSQP</h3>
+        <p>Realoca o budget total igualando os retornos marginais (mROAS) dentro das travas táticas de negócio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO 2: FUNDAMENTAÇÃO MATEMÁTICA -->
+  <section class="mmm-section">
+    <div class="mmm-section-header">
+      <span class="mmm-section-num">02</span>
+      <h2 class="mmm-section-title">Fundamentação Matemática &amp; Equações do Motor</h2>
+    </div>
+    <p class="mmm-prose">
+      Todas as transformações foram implementadas de forma vetorizada em <strong>NumPy</strong> no módulo <code>src/engine/transformations.py</code>, garantindo estabilidade numérica e derivabilidade contínua para o otimizador:
+    </p>
+
+    <div class="mmm-math-grid">
+      <!-- Card 1: Adstock -->
+      <div class="mmm-formula-card">
+        <div>
+          <h3>
+            <span>1. Adstock Geométrico</span>
+            <span class="mmm-badge violet">Carryover</span>
+          </h3>
+          <p class="mmm-prose" style="font-size: 13px; margin-bottom: 8px;">
+            Quantifica a memória residual da campanha ao longo do tempo com taxa de retenção <code>λ</code>:
+          </p>
+          <div class="mmm-formula-box violet">
+            Aₜ = Xₜ + λ · Aₜ₋₁ &nbsp;&nbsp;|&nbsp;&nbsp; T₁/₂ = ln(0.5) / ln(λ)
+          </div>
+        </div>
+        <ul class="mmm-param-list">
+          <li><code>Xₜ</code> Investimento bruto na semana <em>t</em>.</li>
+          <li><code>λ ∈ [0, 1)</code> Taxa de decaimento (ex.: 0.80 em Influenciadores vs. 0.25 em CRM).</li>
+          <li><code>T₁/₂</code> Meia-vida em semanas até o efeito cair pela metade.</li>
+        </ul>
+      </div>
+
+      <!-- Card 2: Hill -->
+      <div class="mmm-formula-card">
+        <div>
+          <h3>
+            <span>2. Saturação de Hill</span>
+            <span class="mmm-badge cyan">Não-Linear</span>
+          </h3>
+          <p class="mmm-prose" style="font-size: 13px; margin-bottom: 8px;">
+            Mapeia o investimento com Adstock em uma resposta sigmoidal normalizada em <code>[0, 1]</code>:
+          </p>
+          <div class="mmm-formula-box">
+            Hill(x) = xˢ / (Kˢ + xˢ)
+          </div>
+        </div>
+        <ul class="mmm-param-list">
+          <li><code>K &gt; 0</code> Ponto de meia-saturação (gasto semanal que atinge 50% do teto do canal).</li>
+          <li><code>S &gt; 0</code> Inclinação da curva (formato <em>S-Shape</em> quando S &gt; 1, côncavo quando S ≤ 1).</li>
+        </ul>
+      </div>
+
+      <!-- Card 3: mROAS -->
+      <div class="mmm-formula-card">
+        <div>
+          <h3>
+            <span>3. ROAS Marginal (mROAS)</span>
+            <span class="mmm-badge emerald">Derivada Analítica</span>
+          </h3>
+          <p class="mmm-prose" style="font-size: 13px; margin-bottom: 8px;">
+            Mede o retorno gerado por <strong>R$ 1,00 adicional</strong> investido na margem atual do canal:
+          </p>
+          <div class="mmm-formula-box emerald">
+            mROAS(x) = [β · S · Kˢ · xˢ⁻¹] / (Kˢ + xˢ)²
+          </div>
+        </div>
+        <ul class="mmm-param-list">
+          <li><code>β</code> Coeficiente de resposta máxima estimado pela regressão Ridge.</li>
+          <li>Guia diretamente para onde mover o próximo real do orçamento.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO 3: DIAGNÓSTICO DE SAÚDE E PARÂMETROS DOS CANAIS -->
+  <section class="mmm-section">
+    <div class="mmm-section-header">
+      <span class="mmm-section-num">03</span>
+      <h2 class="mmm-section-title">Diagnóstico de Saúde Marginal &amp; Calibração Multicanal</h2>
+    </div>
+    <p class="mmm-prose">
+      Enquanto o <strong>ROAS Médio</strong> olha para o passado, o <strong>ROAS Marginal (mROAS)</strong> governa a decisão futura. Um canal pode apresentar alto ROAS médio histórico e ainda assim estar saturado na margem. O motor classifica automaticamente cada canal em 4 zonas operacionais:
+    </p>
+
+    <div class="mmm-health-grid">
+      <div class="mmm-health-card scaling">
+        <div class="mmm-health-head">
+          <span class="mmm-health-name">SCALING</span>
+          <span class="mmm-health-rule">mROAS ≥ 3.0</span>
+        </div>
+        <p class="mmm-health-desc">Alta eficiência marginal. Canal com amplo espaço para aceleração imediata de budget.</p>
+      </div>
+
+      <div class="mmm-health-card efficient">
+        <div class="mmm-health-head">
+          <span class="mmm-health-name">EFFICIENT</span>
+          <span class="mmm-health-rule">1.5 ≤ mROAS &lt; 3.0</span>
+        </div>
+        <p class="mmm-health-desc">Operação saudável e balanceada. Manter investimento ou escalar com cautela.</p>
+      </div>
+
+      <div class="mmm-health-card saturated">
+        <div class="mmm-health-head">
+          <span class="mmm-health-name">SATURATED</span>
+          <span class="mmm-health-rule">0.8 ≤ mROAS &lt; 1.5</span>
+        </div>
+        <p class="mmm-health-desc">Rendimentos decrescentes acentuados. Evitar aumento sem renovação de criativos/público.</p>
+      </div>
+
+      <div class="mmm-health-card over">
+        <div class="mmm-health-head">
+          <span class="mmm-health-name">OVER_INVESTED</span>
+          <span class="mmm-health-rule">mROAS &lt; 0.8</span>
+        </div>
+        <p class="mmm-health-desc">Saturação crítica (custo marginal supera retorno). Realocar budget para canais eficientes.</p>
+      </div>
+    </div>
+
+    <div class="mmm-table-wrap">
+      <table class="mmm-table">
+        <thead>
+          <tr>
+            <th>Canal de Mídia</th>
+            <th>Cluster Tático</th>
+            <th>Decay (λ)</th>
+            <th>Meia-Saturação (K)</th>
+            <th>Shape (S)</th>
+            <th>Budget Semanal Base</th>
+            <th>Comportamento Econométrico</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Meta Ads</strong></td>
+            <td>Performance / Social</td>
+            <td class="mmm-mono">0.65</td>
+            <td class="mmm-mono">R$ 45.000</td>
+            <td class="mmm-mono">1.80</td>
+            <td class="mmm-mono">R$ 38.000</td>
+            <td>Alto volume e memória moderada-alta; satura acima de R$ 55k/sem.</td>
+          </tr>
+          <tr>
+            <td><strong>Google Ads (Search/PMax)</strong></td>
+            <td>Performance / Intenção</td>
+            <td class="mmm-mono">0.35</td>
+            <td class="mmm-mono">R$ 35.000</td>
+            <td class="mmm-mono">2.20</td>
+            <td class="mmm-mono">R$ 32.000</td>
+            <td>Conversão imediata (baixo carryover), curva S íngreme de captura de demanda.</td>
+          </tr>
+          <tr>
+            <td><strong>TikTok Ads</strong></td>
+            <td>Branding / Discovery</td>
+            <td class="mmm-mono">0.50</td>
+            <td class="mmm-mono">R$ 20.000</td>
+            <td class="mmm-mono">1.50</td>
+            <td class="mmm-mono">R$ 15.000</td>
+            <td>Forte tração incremental em faixas intermediárias de investimento.</td>
+          </tr>
+          <tr>
+            <td><strong>Influenciadores</strong></td>
+            <td>Branding / Upper Funnel</td>
+            <td class="mmm-mono">0.80</td>
+            <td class="mmm-mono">R$ 25.000</td>
+            <td class="mmm-mono">1.40</td>
+            <td class="mmm-mono">R$ 18.000</td>
+            <td>Maior meia-vida (~3.1 semanas); efeito residual prolongado no baseline.</td>
+          </tr>
+          <tr>
+            <td><strong>CRM &amp; E-mail Marketing</strong></td>
+            <td>Retenção / Base</td>
+            <td class="mmm-mono">0.25</td>
+            <td class="mmm-mono">R$ 8.000</td>
+            <td class="mmm-mono">1.20</td>
+            <td class="mmm-mono">R$ 5.000</td>
+            <td>Altíssimo ROAS inicial, porém teto de saturação rápido pelo tamanho da base.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SEÇÃO 4: OTIMIZAÇÃO SLSQP E SIMULADOR INTERATIVO -->
+  <section class="mmm-section">
+    <div class="mmm-section-header">
+      <span class="mmm-section-num">04</span>
+      <h2 class="mmm-section-title">Otimização de Orçamento via SciPy SLSQP &amp; Filtros Táticos</h2>
+    </div>
+    <p class="mmm-prose">
+      O módulo <code>BudgetOptimizer</code> formula a distribuição de verba como um problema de programação não-linear restrita. Utilizando o algoritmo <strong>SLSQP (Sequential Least Squares Programming)</strong>, o motor busca o vetor de investimentos $\mathbf{w} = [w_1, w_2, \dots, w_M]$ que maximiza a receita total prevista sujeita à conservação do orçamento e aos limites contratuais de cada canal:
+    </p>
+
+    <div class="mmm-code-panel">
+<span class="mmm-code-comment"># Formulação do Problema de Otimização no Motor (src/engine/optimizer.py)</span>
+<span class="mmm-code-kw">maximize</span>   Receita(w) = β₀ + Σ βᵢ · Hillᵢ(AdstockSteadyStateᵢ(wᵢ))
+<span class="mmm-code-kw">subject to</span> Σ wᵢ = Budget_Total                 <span class="mmm-code-comment"># Restrição de igualdade estrita</span>
+           Min_Boundᵢ ≤ wᵢ ≤ Max_Boundᵢ        <span class="mmm-code-comment"># Restrições de caixa por canal (bounds)</span>
+    </div>
+
+    <div class="mmm-callout">
+      <strong>Simulador What-If &amp; Ribbon de Filtros Táticos:</strong> Na interface web construída com FastAPI + Plotly.js, gestores podem alternar entre uma aba dedicada de <strong>Simulação em Tempo Real</strong> (com sliders debounced que recalculam instantaneamente Receita, ROAS e mROAS via <code>POST /api/v1/simulate</code>) e o <strong>Otimizador SLSQP</strong>, filtrando dinamicamente por Horizonte Temporal (12 a 104 semanas), Clusters de Mídia, Saúde do Canal e Modos Estratégicos (<em>Balanced, Scale Up, High Efficiency, Defensive</em>).
+    </div>
+  </section>
+
+  <!-- SEÇÃO 5: ENGENHARIA DE SOFTWARE E TESTES -->
+  <section class="mmm-section" style="margin-bottom: 8px;">
+    <div class="mmm-section-header">
+      <span class="mmm-section-num">05</span>
+      <h2 class="mmm-section-title">Engenharia de Software, Qualidade &amp; Deploy Serverless</h2>
+    </div>
+    <p class="mmm-prose">
+      Projetado com padrões de produção e arquitetura limpa (separação estrita entre <code>domain</code>, <code>engine</code>, <code>data</code>, <code>config</code> e <code>api</code>), o projeto inclui validação de esquemas via <strong>Pydantic v2</strong>, containerização multi-stage em <strong>Docker</strong>, pipeline <strong>GitHub Actions CI</strong> e <strong>33 testes automatizados</strong> no Pytest cobrindo invariantes matemáticas (convergência do otimizador, conservação de orçamento, limites de saturação e contratos REST).
+    </p>
+  </section>
+</article>
